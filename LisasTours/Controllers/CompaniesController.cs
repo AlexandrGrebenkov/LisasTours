@@ -52,7 +52,7 @@ namespace LisasTours.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
-            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name");
+            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name");
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
             return View();
@@ -63,9 +63,11 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,BusinessLineId,RegionId")] Company company, List<Contact> contacts)
+        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information")] Company company,
+                                                List<Contact> contacts,
+                                                [Bind(Prefix = "BusinessLine")] string[] BusinessLines)
         {
-            if (ModelState.IsValid)
+            /*if (ModelState.IsValid)
             {
                 contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
@@ -75,8 +77,8 @@ namespace LisasTours.Controllers
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
-            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
+            }*/
+            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             return View(company);
         }
 

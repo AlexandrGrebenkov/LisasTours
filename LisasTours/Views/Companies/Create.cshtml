@@ -23,8 +23,15 @@
                 <span asp-validation-for="Site" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BusinessLineId" class="control-label"></label>
-                <select asp-for="BusinessLineId" class="form-control" asp-items="ViewBag.BusinessLineId"></select>
+                <label class="control-label">Виды деятельности</label>
+                <input name="BusinessLine" class="form-control" list="datalist1">
+                <button type="button" class="btn btn-secondary" onclick="addNewBusinessLine()" id="blBtn">+</button>
+                <datalist id="datalist1">
+                    @foreach (var item in ViewBag.BusinessLine)
+                    {
+                        <option value="@item.Name"/>
+                    }
+                </datalist>
             </div>
             <div>
                 <table class="table">
@@ -60,16 +67,26 @@
                 <textarea asp-for="Information" class="form-control"></textarea>
             </div>
         </div>
-    </form>
-</div>
-
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
 <div class="form-group">
-    <input type="submit" value="Create" class="btn btn-default" />
+    <input type="submit" value="Create" class="btn btn-success" />
 </div>
+    </form>
+</div>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
+
+<script>
+    function addNewBusinessLine() {
+        var input = document.createElement("input");
+        input.setAttribute('class', 'form-control');
+        input.setAttribute('name', 'BusinessLine');
+        input.setAttribute('list', 'datalist1');
+        blBtn.before(input)
+  }
+</script>
