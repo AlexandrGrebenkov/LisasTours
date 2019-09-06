@@ -22,7 +22,9 @@ namespace LisasTours.Controllers
         // GET: Companies
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Company.Include(c => c.BusinessLine).Include(c => c.Region);
+            var applicationDbContext = _context.Company
+                .Include(c => c.BusinessLine)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,7 +38,7 @@ namespace LisasTours.Controllers
 
             var company = await _context.Company
                 .Include(c => c.BusinessLine)
-                .Include(c => c.Region)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
@@ -74,8 +76,7 @@ namespace LisasTours.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);            
-            ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name", company.RegionId);
+            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
             return View(company);
         }
 
@@ -89,7 +90,7 @@ namespace LisasTours.Controllers
 
             var company = await _context.Company
                 .Include(c => c.BusinessLine)
-                .Include(c => c.Region)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
@@ -97,7 +98,6 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
             ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
-            ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name", company.RegionId);
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
             return View(company);
         }
@@ -140,7 +140,6 @@ namespace LisasTours.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
-            ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name", company.RegionId);
             return View(company);
         }
 
@@ -154,7 +153,7 @@ namespace LisasTours.Controllers
 
             var company = await _context.Company
                 .Include(c => c.BusinessLine)
-                .Include(c => c.Region)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)

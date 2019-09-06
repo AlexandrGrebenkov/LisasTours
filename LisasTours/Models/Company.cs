@@ -16,8 +16,7 @@ namespace LisasTours.Models
         public int BusinessLineId { get; set; }
         public BusinessLine BusinessLine { get; set; }
 
-        public int RegionId { get; set; }
-        public Region Region { get; set; }
+        public IEnumerable<Affiliate> Affiliates { get; set; }
 
         [BindProperty]
         public List<Contact> Contacts { get; set; }
