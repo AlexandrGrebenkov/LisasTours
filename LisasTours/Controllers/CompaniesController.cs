@@ -67,10 +67,7 @@ namespace LisasTours.Controllers
                 contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
-                foreach (var contact in contacts)
-                {
-                    contact.ContactTypeId = 1;
-                }
+
                 company.Contacts = contacts;
                 _context.Add(company);
                 await _context.SaveChangesAsync();
@@ -96,6 +93,7 @@ namespace LisasTours.Controllers
             }
             ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
             ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name", company.RegionId);
+            ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
             return View(company);
         }
 
@@ -118,6 +116,7 @@ namespace LisasTours.Controllers
                     contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                             string.IsNullOrWhiteSpace(_.LastName) &&
                                             string.IsNullOrWhiteSpace(_.Mail));
+
                     company.Contacts = contacts;
                     _context.Update(company);
                     await _context.SaveChangesAsync();
