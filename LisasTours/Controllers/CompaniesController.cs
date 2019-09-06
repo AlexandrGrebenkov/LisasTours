@@ -37,6 +37,7 @@ namespace LisasTours.Controllers
             var company = await _context.Company
                 .Include(c => c.BusinessLine)
                 .Include(c => c.Region)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
@@ -86,7 +87,11 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            var company = await _context.Company.FindAsync(id);
+            var company = await _context.Company
+                .Include(c => c.BusinessLine)
+                .Include(c => c.Region)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
+                .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
                 return NotFound();
@@ -150,6 +155,7 @@ namespace LisasTours.Controllers
             var company = await _context.Company
                 .Include(c => c.BusinessLine)
                 .Include(c => c.Region)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {

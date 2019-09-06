@@ -43,20 +43,20 @@
                         <th>Email</th>
                         <th>Type</th>
                     </tr>
-                    @for (var i = 0; i < 5; i++)
+                    @foreach (var contact in Model.Contacts)
                     {
                         <tr>
                             <td>
-                                <input type="text" name="[@i].FirstName" />
+                                <input type="text" name="@(contact.FirstName)" value="@(contact.FirstName)"/>
                             </td>
                             <td>
-                                <input type="text" name="[@i].LastName" />
+                                <input type="text" name="@(contact.LastName)"  value="@(contact.LastName)"/>
                             </td>
                             <td>
-                                <input type="text" name="[@i].Mail" />
+                                <input type="text" name="@(contact.Mail)"  value="@(contact.Mail)"/>
                             </td>
                             <td>
-                                <select name="[@i].ContactTypeId" asp-items="ViewBag.ContactTypes"></select>
+                                <select name="@(contact.ContactTypeId)" asp-items="ViewBag.ContactTypes"></select>
                             </td>
                         </tr>
                     }

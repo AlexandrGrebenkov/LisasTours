@@ -9,38 +9,67 @@
 <div>
     <h4>Company</h4>
     <hr />
-    <dl class="dl-horizontal">
-        <dt>
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Site)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Site)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Information)
-        </dt>
-        <dt>
-            @Html.DisplayNameFor(model => model.BusinessLine)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.BusinessLine.Name)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.Region)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.Region.Name)
-        </dd>
-        <dd>
-            @Html.DisplayFor(model => model.Information)
-        </dd>
-    </dl>
+    <div class="row">
+        <div class="col-md-4">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Name)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Site)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Site)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Information)
+                </dt>
+                <dt>
+                    @Html.DisplayNameFor(model => model.BusinessLine)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.BusinessLine.Name)
+                </dd>
+                <dt>
+                    @Html.DisplayNameFor(model => model.Region)
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.Region.Name)
+                </dd>
+                <dd>
+                    @Html.DisplayFor(model => model.Information)
+                </dd>
+            </dl>
+        </div>
+        <div class="col-md-4">
+            @foreach (var contact in Model.Contacts)
+            {
+                <dl class="dl-horizontal">
+                    <dt>
+                        Имя
+                    </dt>
+                    <dd>
+                        @contact.FullName
+                    </dd>
+                    <dt>
+                        Почта
+                    </dt>
+                    <dd>
+                        @contact.Mail
+                    </dd>
+                    <dt>
+                        Тип почты
+                    </dt>
+                    <dd>
+                        @contact.Type.Name
+                    </dd>
+                </dl>
+            }
+        </div>
+    </div>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
