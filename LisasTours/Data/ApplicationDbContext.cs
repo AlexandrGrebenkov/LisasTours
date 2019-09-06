@@ -17,6 +17,7 @@ namespace LisasTours.Data
         public DbSet<ContactType> ContactTypes { get; set; }
         public DbSet<Contact> Contacts { get; set; }
         public DbSet<BusinessLine> BusinessLines { get; set; }
+        public DbSet<CompanyBusinessLine> CompanyBusinessLines { get; set; }
         public DbSet<Region> Regions { get; set; }
     }
 }

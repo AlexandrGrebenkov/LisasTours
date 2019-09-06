@@ -23,7 +23,7 @@ namespace LisasTours.Controllers
         public async Task<IActionResult> Index()
         {
             var applicationDbContext = _context.Company
-                .Include(c => c.BusinessLine)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region);
             return View(await applicationDbContext.ToListAsync());
         }
@@ -37,7 +37,7 @@ namespace LisasTours.Controllers
             }
 
             var company = await _context.Company
-                .Include(c => c.BusinessLine)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -91,7 +91,7 @@ namespace LisasTours.Controllers
             }
 
             var company = await _context.Company
-                .Include(c => c.BusinessLine)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -154,7 +154,7 @@ namespace LisasTours.Controllers
             }
 
             var company = await _context.Company
-                .Include(c => c.BusinessLine)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
                 .FirstOrDefaultAsync(m => m.Id == id);

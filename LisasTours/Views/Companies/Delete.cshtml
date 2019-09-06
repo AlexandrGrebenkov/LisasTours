@@ -24,19 +24,13 @@
             @Html.DisplayFor(model => model.Site)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Information)
+            @Html.DisplayNameFor(model => model.BusinessLines)
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Information)
-        </dd>
-        <dt>
-            @Html.DisplayNameFor(model => model.BusinessLine)
-        </dt>
-        <dd>
-            @Html.DisplayFor(model => model.BusinessLine.Name)
+            @Html.DisplayFor(model => model.BusinessLinesString)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-default" /> |
