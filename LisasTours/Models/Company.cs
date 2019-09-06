@@ -20,6 +20,6 @@ namespace LisasTours.Models
         public Region Region { get; set; }
 
         [BindProperty]
-        public IEnumerable<Contact> Contacts { get; set; }
+        public List<Contact> Contacts { get; set; }
     }
 }

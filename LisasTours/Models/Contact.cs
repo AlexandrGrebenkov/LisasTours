@@ -8,6 +8,10 @@ namespace LisasTours.Models
     public class Contact
     {
         public int Id { get; set; }
+
+        public int CompanyId { get; set; }
+        public Company Company { get; set; }
+
         public string Mail { get; set; }
 
         public int ContactTypeId { get; set; }

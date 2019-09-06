@@ -52,9 +52,7 @@ namespace LisasTours.Controllers
             ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name");
             ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name");
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
-            var company = new Company();
-            company.Contacts = new Contact[3];
-            return View(company);
+            return View();
         }
 
         // POST: Companies/Create
@@ -62,13 +60,17 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,BusinessLineId,RegionId,contact.Mail")] Company company, List<Contact> contacts)
+        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,BusinessLineId,RegionId")] Company company, List<Contact> contacts)
         {
             if (ModelState.IsValid)
             {
                 contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
+                foreach (var contact in contacts)
+                {
+                    contact.ContactTypeId = 1;
+                }
                 company.Contacts = contacts;
                 _context.Add(company);
                 await _context.SaveChangesAsync();
