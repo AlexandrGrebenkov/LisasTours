@@ -7,10 +7,10 @@
 <h2>Details</h2>
 
 <div>
-    <h4>Company</h4>
+    <h4>@Html.DisplayFor(model => model.Name)</h4>
     <hr />
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-8">
             <dl class="dl-horizontal">
                 <dt>
                     @Html.DisplayNameFor(model => model.Name)
@@ -22,7 +22,7 @@
                     @Html.DisplayNameFor(model => model.Site)
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.Site)
+                    <a href="http://@Html.DisplayFor(model => model.Site)" target="_blank">@Html.DisplayFor(model => model.Site)</a>
                 </dd>
                 <dt>
                     @Html.DisplayNameFor(model => model.Information)
@@ -44,7 +44,7 @@
                 </dd>
             </dl>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-2">
             @foreach (var contact in Model.Contacts)
             {
                 <dl class="dl-horizontal">
