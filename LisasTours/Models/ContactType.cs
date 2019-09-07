@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LisasTours.Models.Base;
 
 namespace LisasTours.Models
 {
     /// <summary>
     /// Тип почты
     /// </summary>
-    public class ContactType
+    public class ContactType : NamedEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }

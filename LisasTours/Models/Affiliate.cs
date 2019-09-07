@@ -1,17 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LisasTours.Models.Base;
 
 namespace LisasTours.Models
 {
     /// <summary>
     /// Филиал компании (представительство)
     /// </summary>
-    public class Affiliate
+    public class Affiliate : Entity
     {
-        public int Id { get; set; }
-
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 

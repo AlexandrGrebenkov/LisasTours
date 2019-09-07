@@ -1,16 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LisasTours.Models.Base;
 
 namespace LisasTours.Models
 {
     /// <summary>
     /// Тип деятельности
     /// </summary>
-    public class BusinessLine
+    public class BusinessLine : NamedEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+
     }
 }

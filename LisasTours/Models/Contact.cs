@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using LisasTours.Models.Base;
 
 namespace LisasTours.Models
 {
-    public class Contact
+    public class Contact : Entity
     {
-        public int Id { get; set; }
-
         public int CompanyId { get; set; }
         public Company Company { get; set; }
 

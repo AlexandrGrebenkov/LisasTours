@@ -1,14 +1,13 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using LisasTours.Models.Base;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LisasTours.Models
 {
-    public class Company
+    public class Company : NamedEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
         public string Site { get; set; }
         public string Information { get; set; }
 

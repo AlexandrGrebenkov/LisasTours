@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using LisasTours.Models.Base;
 
 namespace LisasTours.Models
 {
-    public class Region
+    public class Region : NamedEntity
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
     }
 }
