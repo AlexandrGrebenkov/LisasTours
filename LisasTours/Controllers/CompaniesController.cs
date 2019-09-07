@@ -63,8 +63,7 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information")] Company company,
-                                                List<Contact> contacts,
+        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,Contacts")] Company company,
                                                 [Bind(Prefix = "BusinessLine")] string[] businessLines)
         {
             var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
@@ -79,16 +78,15 @@ namespace LisasTours.Controllers
             
             if (ModelState.IsValid)
             {
-                contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
+                company.BusinessLines = bl.Select(b => new CompanyBusinessLine() { BusinessLine = b }).ToList();
+                company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
-                company.BusinessLines = bl.Select(b => new CompanyBusinessLine() { BusinessLine = b }).ToList();
-                company.Contacts = contacts;
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
+            ViewData["BusinessLine"] = businessLinesFromDb;
             return View(company);
         }
 
@@ -111,6 +109,7 @@ namespace LisasTours.Controllers
             }
             ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
+            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             return View(company);
         }
 
@@ -119,22 +118,29 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Site,Information,BusinessLineId,RegionId")] Company company, List<Contact> contacts)
+        public async Task<IActionResult> Edit(int id,
+                                              [Bind("Id,Name,Site,Information,Contacts")] Company company,
+                                              [Bind(Prefix = "BusinessLine")] string[] businessLines)
         {
             if (id != company.Id)
             {
                 return NotFound();
             }
 
+            var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
+            var businessLinesFromDb = _context.Set<BusinessLine>().ToList();
+
+            // колхоз для получения Id BusinessLine по стоке названия
+            foreach (var b in bl)
+            {
+                var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
+                if (bb != null) b.Id = bb.Id;
+            }
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
-                                            string.IsNullOrWhiteSpace(_.LastName) &&
-                                            string.IsNullOrWhiteSpace(_.Mail));
-
-                    company.Contacts = contacts;
                     _context.Update(company);
                     await _context.SaveChangesAsync();
                 }
@@ -151,7 +157,7 @@ namespace LisasTours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
+            ViewData["BusinessLine"] = businessLinesFromDb;
             return View(company);
         }
 

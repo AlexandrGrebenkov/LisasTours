@@ -10,69 +10,75 @@
 <hr />
 <div class="row">
     <form asp-action="Create">
-        <div class="col-md-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Site" class="control-label"></label>
-                <input asp-for="Site" class="form-control" />
-                <span asp-validation-for="Site" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label class="control-label">Виды деятельности</label>
-                <input name="BusinessLine" class="form-control" list="datalist1">
-                <button type="button" class="btn btn-secondary" onclick="addNewBusinessLine()" id="blBtn">+</button>
-                <datalist id="datalist1">
-                    @foreach (var item in ViewBag.BusinessLine)
-                    {
-                        <option value="@item.Name"/>
-                    }
-                </datalist>
-            </div>
-            <div>
-                <table class="table">
-                    <tr>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Email</th>
-                        <th>Type</th>
-                    </tr>
-                    @for (var i = 0; i < 5; i++)
-                    {
+        <div class="row">
+            <div class="col-md-4">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group">
+                    <label asp-for="Name" class="control-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Site" class="control-label"></label>
+                    <input asp-for="Site" class="form-control" />
+                    <span asp-validation-for="Site" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">Виды деятельности</label>
+                    <input name="BusinessLine" class="form-control" list="datalist1">
+                    <button type="button" class="btn btn-secondary" onclick="addNewBusinessLine()" id="blBtn">+</button>
+                    <datalist id="datalist1">
+                        @foreach (var item in ViewBag.BusinessLine)
+                        {
+                            <option value="@item.Name" />
+                        }
+                    </datalist>
+                </div>
+                <div>
+                    <table class="table">
                         <tr>
-                            <td>
-                                <input type="text" name="[@i].FirstName" />
-                            </td>
-                            <td>
-                                <input type="text" name="[@i].LastName" />
-                            </td>
-                            <td>
-                                <input type="text" name="[@i].Mail" />
-                            </td>
-                            <td>
-                                <select name="[@i].ContactTypeId" asp-items="ViewBag.ContactTypes"></select>
-                            </td>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Email</th>
+                            <th>Type</th>
                         </tr>
-                    }
-                </table>
+                        @for (var i = 0; i < 5; i++)
+                        {
+                            <tr>
+                                <td>
+                                    <input type="text" name="Contacts[@i].FirstName" />
+                                </td>
+                                <td>
+                                    <input type="text" name="Contacts[@i].LastName" />
+                                </td>
+                                <td>
+                                    <input type="text" name="Contacts[@i].Mail" />
+                                </td>
+                                <td>
+                                    <select name="Contacts[@i].ContactTypeId" asp-items="ViewBag.ContactTypes"></select>
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label asp-for="Information" class="control-label"></label>
+                    <textarea asp-for="Information" class="form-control"></textarea>
+                </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="form-group">
-                <label asp-for="Information" class="control-label"></label>
-                <textarea asp-for="Information" class="form-control"></textarea>
+        <div class="row">
+            <div class="col-md-4">
+                <div>
+                    <a asp-action="Index">Back to List</a>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-success" />
+                </div>
             </div>
         </div>
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-<div class="form-group">
-    <input type="submit" value="Create" class="btn btn-success" />
-</div>
     </form>
 </div>
 
@@ -88,5 +94,5 @@
         input.setAttribute('name', 'BusinessLine');
         input.setAttribute('list', 'datalist1');
         blBtn.before(input)
-  }
+    }
 </script>
