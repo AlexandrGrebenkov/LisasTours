@@ -39,6 +39,10 @@
             </dl>
         </div>
         <div class="col-md-2">
+            @foreach (var affiliate in Model.Affiliates)
+            {
+                <p>@affiliate.Region.Name</p>
+            }
             @foreach (var contact in Model.Contacts)
             {
                 <dl class="dl-horizontal">

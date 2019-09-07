@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using LisasTours.Data;
 using LisasTours.Models;
+using LisasTours.Models.Base;
 
 namespace LisasTours.Controllers
 {
@@ -53,6 +54,7 @@ namespace LisasTours.Controllers
         public IActionResult Create()
         {
             ViewData["BusinessLine"] = _context.Set<BusinessLine>();
+            ViewData["Regions"] = _context.Set<Region>();
             ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name");
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
             return View();
@@ -64,21 +66,19 @@ namespace LisasTours.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,Contacts")] Company company,
-                                                [Bind(Prefix = "BusinessLine")] string[] businessLines)
+                                                [Bind(Prefix = "BusinessLine")] string[] businessLines,
+                                                [Bind(Prefix = "Affiliation")] string[] affiliations)
         {
-            var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
-            var businessLinesFromDb = _context.Set<BusinessLine>().ToList();
-
-            // колхоз для получения Id BusinessLine по стоке названия
-            foreach (var b in bl)
-            {
-                var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
-                if (bb != null) b.Id = bb.Id;
-            }
-            
             if (ModelState.IsValid)
             {
-                company.BusinessLines = bl.Select(b => new CompanyBusinessLine() { BusinessLine = b }).ToList();
+                company.BusinessLines = GetNamedCollection<BusinessLine>(businessLines)
+                    .Select(_ => new CompanyBusinessLine() { BusinessLine = _ })
+                    .ToList();
+
+                company.Affiliates = GetNamedCollection<Region>(affiliations)
+                    .Select(_ => new Affiliate() { Region = _ })
+                    .ToList();
+
                 company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
@@ -86,8 +86,27 @@ namespace LisasTours.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLine"] = businessLinesFromDb;
+            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
+            ViewData["Regions"] = _context.Set<Region>();
             return View(company);
+        }
+
+        IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
+            where T : NamedEntity, new()
+        {
+            var newCollection = names
+                .Where(n => !string.IsNullOrWhiteSpace(n))
+                .Select(str => new T() { Name = str })
+                .ToList();
+            var collectionFromDb = _context.Set<T>().ToList();
+
+            // колхоз для получения Id по стоке названия
+            foreach (var item in newCollection)
+            {
+                var bb = collectionFromDb.FirstOrDefault(_ => _.Name == item.Name);
+                if (bb != null) item.Id = bb.Id;
+            }
+            return newCollection;
         }
 
         // GET: Companies/Edit/5
@@ -107,7 +126,6 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-            ViewData["BusinessLineId"] = new SelectList(_context.Set<BusinessLine>(), "Id", "Name", company.BusinessLineId);
             ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
             ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             return View(company);

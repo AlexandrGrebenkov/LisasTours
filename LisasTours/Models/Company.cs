@@ -11,7 +11,6 @@ namespace LisasTours.Models
         public string Site { get; set; }
         public string Information { get; set; }
 
-        public int BusinessLineId { get; set; }
         public IEnumerable<CompanyBusinessLine> BusinessLines { get; set; }
 
         public IEnumerable<Affiliate> Affiliates { get; set; }
