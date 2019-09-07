@@ -65,19 +65,29 @@ namespace LisasTours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Name,Site,Information")] Company company,
                                                 List<Contact> contacts,
-                                                [Bind(Prefix = "BusinessLine")] string[] BusinessLines)
+                                                [Bind(Prefix = "BusinessLine")] string[] businessLines)
         {
-            /*if (ModelState.IsValid)
+            var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
+            var businessLinesFromDb = _context.Set<BusinessLine>().ToList();
+
+            // колхоз для получения Id BusinessLine по стоке названия
+            foreach (var b in bl)
+            {
+                var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
+                if (bb != null) b.Id = bb.Id;
+            }
+            
+            if (ModelState.IsValid)
             {
                 contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
-
+                company.BusinessLines = bl.Select(b => new CompanyBusinessLine() { BusinessLine = b }).ToList();
                 company.Contacts = contacts;
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }*/
+            }
             ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             return View(company);
         }

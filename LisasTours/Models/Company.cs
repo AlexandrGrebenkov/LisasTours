@@ -21,6 +21,8 @@ namespace LisasTours.Models
         public List<Contact> Contacts { get; set; }
 
         [NotMapped]
-        public string BusinessLinesString => string.Join(", ", BusinessLines?.Select(_ => _.BusinessLine.Name));
+        public string BusinessLinesString => BusinessLines != null
+            ? string.Join(", ", BusinessLines.Select(_ => _.BusinessLine.Name))
+            : string.Empty;
     }
 }
