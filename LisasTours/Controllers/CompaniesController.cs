@@ -91,6 +91,17 @@ namespace LisasTours.Controllers
         {
             if (ModelState.IsValid)
             {
+                company.Name?.Trim();
+                company.Site = company.Site?.Trim().Replace("http://", "").Replace("https://", "");
+                company.Information?.Trim();
+                foreach (var contact in company.Contacts)
+                {
+                    contact.FirstName?.Trim();
+                    contact.LastName?.Trim();
+                    contact.PatronymicName?.Trim();
+                    contact.Mail?.Trim();
+                }
+
                 company.BusinessLines = GetNamedCollection<BusinessLine>(businessLines)
                     .Select(_ => new CompanyBusinessLine() { BusinessLine = _ })
                     .ToList();
