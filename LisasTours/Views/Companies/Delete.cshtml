@@ -1,39 +1,44 @@
 ﻿@model LisasTours.Models.Company
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Удаление";
 }
 
-<h2>Delete</h2>
+<h2>Удаление</h2>
 
-<h3>Are you sure you want to delete this?</h3>
+<h3>Вы действительно хотите удалить эту компанию из базы?</h3>
 <div>
-    <h4>Company</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
-            @Html.DisplayNameFor(model => model.Name)
+            Название
         </dt>
         <dd>
             @Html.DisplayFor(model => model.Name)
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.Site)
+            Сайт
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Site)
+            <a href="http://@Html.DisplayFor(model => model.Site)" target="_blank">@Html.DisplayFor(model => model.Site)</a>
         </dd>
         <dt>
-            @Html.DisplayNameFor(model => model.BusinessLines)
+            Направления
         </dt>
         <dd>
             @Html.DisplayFor(model => model.BusinessLinesString)
+        </dd>
+        <dt>
+            Регионы
+        </dt>
+        <dd>
+            @Html.DisplayFor(model => model.AffiliatesString)
         </dd>
     </dl>
 
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
-        <input type="submit" value="Delete" class="btn btn-default" /> |
+        <input type="submit" value="Удалить" class="btn btn-danger" /> |
         <a asp-action="Index">Back to List</a>
     </form>
 </div>

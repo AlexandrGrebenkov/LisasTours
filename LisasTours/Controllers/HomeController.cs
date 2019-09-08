@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using LisasTours.Data;
 using LisasTours.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -21,20 +20,6 @@ namespace LisasTours.Controllers
             return View();
         }
 
-        public IActionResult About()
-        {
-            ViewData["Message"] = "Your application description page.";
-
-            return View();
-        }
-
-        public IActionResult Contact()
-        {
-            ViewData["Message"] = "Your contact page.";
-
-            return View();
-        }
-
         public IActionResult Privacy()
         {
             return View();
@@ -44,13 +29,6 @@ namespace LisasTours.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        [HttpPost]
-        public IActionResult OnPost(List<Contact> contacts)
-        {
-
-            return View("About");
         }
     }
 }

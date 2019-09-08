@@ -1,37 +1,42 @@
 ﻿@model LisasTours.Models.Company
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = @Html.DisplayFor(model => model.Name);
 }
 
-<h2>Details</h2>
+<h2>@Html.DisplayFor(model => model.Name)</h2>
 
 <div>
-    <h4>@Html.DisplayFor(model => model.Name)</h4>
     <hr />
     <div class="row">
         <div class="col-md-8">
             <dl class="dl-horizontal">
                 <dt>
-                    @Html.DisplayNameFor(model => model.Name)
+                    Название
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Name)
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.Site)
+                    Сайт
                 </dt>
                 <dd>
                     <a href="http://@Html.DisplayFor(model => model.Site)" target="_blank">@Html.DisplayFor(model => model.Site)</a>
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.BusinessLines)
+                    Направления
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.BusinessLinesString)
                 </dd>
                 <dt>
-                    @Html.DisplayNameFor(model => model.Information)
+                    Регионы
+                </dt>
+                <dd>
+                    @Html.DisplayFor(model => model.AffiliatesString)
+                </dd>
+                <dt>
+                    Описание
                 </dt>
                 <dd>
                     @Html.DisplayFor(model => model.Information)
@@ -39,10 +44,6 @@
             </dl>
         </div>
         <div class="col-md-2">
-            @foreach (var affiliate in Model.Affiliates)
-            {
-                <p>@affiliate.Region.Name</p>
-            }
             @foreach (var contact in Model.Contacts)
             {
                 <dl class="dl-horizontal">

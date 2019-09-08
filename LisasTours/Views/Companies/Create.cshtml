@@ -1,12 +1,11 @@
 ﻿@model LisasTours.Models.Company
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Добавление компании";
 }
 
-<h2>Create</h2>
+<h2>Добавление компании</h2>
 
-<h4>Company</h4>
 <hr />
 <div class="row">
     <form asp-action="Create">
@@ -15,13 +14,13 @@
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                 <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
+                    <label class="control-label">Название</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
 
                 <div class="form-group">
-                    <label asp-for="Site" class="control-label"></label>
+                    <label class="control-label">Сайт</label>
                     <input asp-for="Site" class="form-control" />
                     <span asp-validation-for="Site" class="text-danger"></span>
                 </div>
@@ -53,10 +52,10 @@
                 <div>
                     <table class="table">
                         <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
+                            <th>Имя</th>
+                            <th>Фамилия</th>
                             <th>Email</th>
-                            <th>Type</th>
+                            <th>Тип</th>
                         </tr>
                         @for (var i = 0; i < 5; i++)
                         {
@@ -80,7 +79,7 @@
             </div>
             <div class="col-md-4">
                 <div class="form-group">
-                    <label asp-for="Information" class="control-label"></label>
+                    <label class="control-label">Описание</label>
                     <textarea asp-for="Information" class="form-control"></textarea>
                 </div>
             </div>
@@ -91,7 +90,7 @@
                     <a asp-action="Index">Back to List</a>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Create" class="btn btn-success" />
+                    <input type="submit" value="Добавить" class="btn btn-success" />
                 </div>
             </div>
         </div>
