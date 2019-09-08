@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using LisasTours.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using LisasTours.Services;
 
 namespace LisasTours
 {
@@ -39,6 +40,8 @@ namespace LisasTours
                     Configuration.GetConnectionString("MyDb")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddSingleton<ExcelExporter>();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

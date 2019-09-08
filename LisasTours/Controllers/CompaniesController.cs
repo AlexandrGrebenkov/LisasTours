@@ -7,6 +7,7 @@ using LisasTours.Data;
 using LisasTours.Models;
 using LisasTours.Models.Base;
 using LisasTours.Models.ViewModels;
+using LisasTours.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +17,11 @@ namespace LisasTours.Controllers
     public class CompaniesController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public CompaniesController(ApplicationDbContext context)
+        private readonly ExcelExporter Exporter;
+        public CompaniesController(ApplicationDbContext context, ExcelExporter exporter)
         {
             _context = context;
+            Exporter = exporter;
         }
 
         // GET: Companies
@@ -232,6 +234,19 @@ namespace LisasTours.Controllers
         private bool CompanyExists(int id)
         {
             return _context.Company.Any(e => e.Id == id);
+        }
+
+        public async Task<IActionResult> Export()
+        {
+            var companies = await _context.Company
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
+                .Include(c => c.Contacts).ThenInclude(c => c.Type)
+                //.Where(CreateFilterExpression(searchVM))
+                .ToListAsync();
+            var report = await Exporter.GenerateCompaniesReport(companies);
+            return File(report, "application/vnd.ms-excel", "Компании.xslx");
         }
     }
 }

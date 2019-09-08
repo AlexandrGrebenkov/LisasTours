@@ -9,6 +9,8 @@
     <PackageReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.9" />
+    <PackageReference Include="Syncfusion.DocIO.Net.Core" Version="17.2.0.49" />
+    <PackageReference Include="Syncfusion.XlsIO.Net.Core" Version="17.2.0.49" />
   </ItemGroup>
 
 </Project>
