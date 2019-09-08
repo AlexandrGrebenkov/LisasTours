@@ -1,13 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using LisasTours.Data;
 using LisasTours.Models;
 using LisasTours.Models.Base;
+using LisasTours.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 
 namespace LisasTours.Controllers
 {
@@ -27,6 +29,22 @@ namespace LisasTours.Controllers
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region);
             return View(await applicationDbContext.ToListAsync());
+        }
+
+        public async Task<IActionResult> Search(CompanySearchVM searchVM)
+        {
+            var companies = await _context.Company
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
+                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
+                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
+                .Where(CreateFilterExpression(searchVM))
+                .ToListAsync();
+            return View(nameof(Index), companies);
+        }
+
+        private static Expression<Func<Company, bool>> CreateFilterExpression(CompanySearchVM searchVM)
+        {
+            return c => c.Affiliates.Any(_ => searchVM.RegionNames.Contains(_.Region.Name));
         }
 
         // GET: Companies/Details/5
