@@ -50,31 +50,38 @@
                 </div>
 
                 <div>
-                    <table class="table">
-                        <tr>
-                            <th>Имя</th>
-                            <th>Фамилия</th>
-                            <th>Email</th>
-                            <th>Тип</th>
-                        </tr>
-                        @for (var i = 0; i < 5; i++)
+                    <dl class="dl-horizontal">
+                        <dt>Email</dt>
+                        <dd>
+                            <input type="text" name="Contacts[0].Mail" class="form-control" />
+                        </dd>
+                        <dt>Тип</dt>
+                        <dd>
+                            <input name="Contacts[0].ContactType.Name" class="form-control" list="contactTypesDatalist">
+                        </dd>
+
+                        <dt>Фамилия</dt>
+                        <dd>
+                            <input type="text" name="Contacts[0].LastName" class="form-control" />
+                        </dd>
+
+                        <dt>Имя</dt>
+                        <dd>
+                            <input type="text" name="Contacts[0].FirstName" class="form-control" />
+                        </dd>
+
+                        <dt>Отчество</dt>
+                        <dd>
+                            <input type="text" name="Contacts[0].PatronymicName" class="form-control" />
+                        </dd>
+                    </dl>
+                    <button type="button" class="btn btn-secondary" onclick="addNewContact()" id="contactBtn">+</button>
+                    <datalist id="contactTypesDatalist">
+                        @foreach (var item in ViewBag.ContactTypes)
                         {
-                            <tr>
-                                <td>
-                                    <input type="text" name="Contacts[@i].FirstName" />
-                                </td>
-                                <td>
-                                    <input type="text" name="Contacts[@i].LastName" />
-                                </td>
-                                <td>
-                                    <input type="text" name="Contacts[@i].Mail" />
-                                </td>
-                                <td>
-                                    <select name="Contacts[@i].ContactTypeId" asp-items="ViewBag.ContactTypes"></select>
-                                </td>
-                            </tr>
+                            <option value="@item.Name" />
                         }
-                    </table>
+                    </datalist>
                 </div>
             </div>
             <div class="col-md-4">
@@ -119,5 +126,15 @@
         input.setAttribute('name', 'Affiliation');
         input.setAttribute('list', 'regionDatalist');
         affiliationBtn.before(input)
+    }
+</script>
+
+<script>
+    function addNewContact() {
+        var input = document.createElement("input");
+        input.setAttribute('class', 'form-control');
+        input.setAttribute('name', 'Affiliation');
+        input.setAttribute('list', 'regionDatalist');
+        contactBtn.before(input)
     }
 </script>

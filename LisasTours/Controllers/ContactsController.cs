@@ -22,7 +22,7 @@ namespace LisasTours.Controllers
         // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Contacts.Include(c => c.Company).Include(c => c.Type);
+            var applicationDbContext = _context.Contacts.Include(c => c.Company).Include(c => c.ContactType);
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -36,7 +36,7 @@ namespace LisasTours.Controllers
 
             var contact = await _context.Contacts
                 .Include(c => c.Company)
-                .Include(c => c.Type)
+                .Include(c => c.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
@@ -56,7 +56,7 @@ namespace LisasTours.Controllers
 
             var contact = await _context.Contacts
                 .Include(c => c.Company)
-                .Include(c => c.Type)
+                .Include(c => c.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {
@@ -112,7 +112,7 @@ namespace LisasTours.Controllers
 
             var contact = await _context.Contacts
                 .Include(c => c.Company)
-                .Include(c => c.Type)
+                .Include(c => c.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (contact == null)
             {

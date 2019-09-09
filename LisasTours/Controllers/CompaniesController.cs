@@ -9,7 +9,6 @@ using LisasTours.Models.Base;
 using LisasTours.Models.ViewModels;
 using LisasTours.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace LisasTours.Controllers
@@ -60,7 +59,7 @@ namespace LisasTours.Controllers
             var company = await _context.Company
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
@@ -73,10 +72,7 @@ namespace LisasTours.Controllers
         // GET: Companies/Create
         public IActionResult Create()
         {
-            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
-            ViewData["Regions"] = _context.Set<Region>();
-            ViewData["RegionId"] = new SelectList(_context.Set<Region>(), "Id", "Name");
-            ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
+            CreateViewDataForChanges();
             return View();
         }
 
@@ -113,12 +109,12 @@ namespace LisasTours.Controllers
                 company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
+
                 _context.Add(company);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
-            ViewData["Regions"] = _context.Set<Region>();
+            CreateViewDataForChanges();
             return View(company);
         }
 
@@ -151,14 +147,13 @@ namespace LisasTours.Controllers
             var company = await _context.Company
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
                 return NotFound();
             }
-            ViewData["ContactTypes"] = new SelectList(_context.Set<ContactType>(), "Id", "Name");
-            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
+            CreateViewDataForChanges();
             return View(company);
         }
 
@@ -206,7 +201,7 @@ namespace LisasTours.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["BusinessLine"] = businessLinesFromDb;
+            CreateViewDataForChanges();
             return View(company);
         }
 
@@ -221,7 +216,7 @@ namespace LisasTours.Controllers
             var company = await _context.Company
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.Type)
+                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (company == null)
             {
@@ -253,11 +248,18 @@ namespace LisasTours.Controllers
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(c => c.Type)
+                .Include(c => c.Contacts).ThenInclude(c => c.ContactType)
                 //.Where(CreateFilterExpression(searchVM))
                 .ToListAsync();
             var report = await Exporter.GenerateCompaniesReport(companies);
             return File(report, "application/vnd.ms-excel", "Компании.xslx");
+        }
+
+        void CreateViewDataForChanges()
+        {
+            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
+            ViewData["Regions"] = _context.Set<Region>();
+            ViewData["ContactTypes"] = _context.Set<ContactType>();
         }
     }
 }

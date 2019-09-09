@@ -11,7 +11,7 @@ namespace LisasTours.Models
         public string Mail { get; set; }
 
         public int ContactTypeId { get; set; }
-        public ContactType Type { get; set; }
+        public ContactType ContactType { get; set; }
 
         public string FirstName { get; set; }
         public string PatronymicName { get; set; }
