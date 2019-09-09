@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LisasTours.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using LisasTours.Models;
 
 namespace LisasTours.Data
 {
@@ -19,5 +16,14 @@ namespace LisasTours.Data
         public DbSet<BusinessLine> BusinessLines { get; set; }
         public DbSet<CompanyBusinessLine> CompanyBusinessLines { get; set; }
         public DbSet<Region> Regions { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ContactType>(entity => entity.HasIndex(e => e.Name).IsUnique());
+            modelBuilder.Entity<Region>(entity => entity.HasIndex(e => e.Name).IsUnique());
+            modelBuilder.Entity<BusinessLine>(entity => entity.HasIndex(e => e.Name).IsUnique());
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }
