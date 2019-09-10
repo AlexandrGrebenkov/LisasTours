@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using LisasTours.Data;
 using LisasTours.Models;
@@ -17,10 +15,13 @@ namespace LisasTours.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly ExcelExporter Exporter;
-        public CompaniesController(ApplicationDbContext context, ExcelExporter exporter)
+        private readonly CompanyFilterService CompanyFilterService;
+
+        public CompaniesController(ApplicationDbContext context, ExcelExporter exporter, CompanyFilterService companyFilterService)
         {
             _context = context;
             Exporter = exporter;
+            CompanyFilterService = companyFilterService;
         }
 
         // GET: Companies
@@ -38,14 +39,9 @@ namespace LisasTours.Controllers
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
                 .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
                 .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Where(CreateFilterExpression(searchVM))
+                .Where(CompanyFilterService.CreateCompanyFilterExpression(searchVM))
                 .ToListAsync();
             return View(nameof(Index), companies);
-        }
-
-        private static Expression<Func<Company, bool>> CreateFilterExpression(CompanySearchVM searchVM)
-        {
-            return c => c.Affiliates.Any(_ => searchVM.RegionNames.Contains(_.Region.Name));
         }
 
         // GET: Companies/Details/5
@@ -118,7 +114,7 @@ namespace LisasTours.Controllers
             return View(company);
         }
 
-        IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
+        private IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
             where T : NamedEntity, new()
         {
             var newCollection = names
@@ -131,7 +127,10 @@ namespace LisasTours.Controllers
             foreach (var item in newCollection)
             {
                 var bb = collectionFromDb.FirstOrDefault(_ => _.Name == item.Name);
-                if (bb != null) item.Id = bb.Id;
+                if (bb != null)
+                {
+                    item.Id = bb.Id;
+                }
             }
             return newCollection;
         }
@@ -178,7 +177,10 @@ namespace LisasTours.Controllers
             foreach (var b in bl)
             {
                 var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
-                if (bb != null) b.Id = bb.Id;
+                if (bb != null)
+                {
+                    b.Id = bb.Id;
+                }
             }
 
             if (ModelState.IsValid)
@@ -255,7 +257,7 @@ namespace LisasTours.Controllers
             return File(report, "application/vnd.ms-excel", "Компании.xslx");
         }
 
-        void CreateViewDataForChanges()
+        private void CreateViewDataForChanges()
         {
             ViewData["BusinessLine"] = _context.Set<BusinessLine>();
             ViewData["Regions"] = _context.Set<Region>();
