@@ -27,8 +27,10 @@
 
                 <div class="form-group">
                     <label class="control-label">Виды деятельности</label>
-                    <input name="BusinessLine" class="form-control" list="datalist1">
-                    <button type="button" class="btn btn-secondary" onclick="addNewBusinessLine()" id="blBtn">+</button>
+                    <div id="divBL">
+                        <input name="BusinessLine" class="form-control" list="datalist1">
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)" id="blBtn">+</button>
                     <datalist id="datalist1">
                         @foreach (var item in ViewBag.BusinessLine)
                         {
@@ -109,17 +111,7 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
-<script>
-    function addNewBusinessLine() {
-        var input = document.createElement("input");
-        input.setAttribute('class', 'form-control');
-        input.setAttribute('name', 'BusinessLine');
-        input.setAttribute('list', 'datalist1');
-        blBtn.before(input)
-    }
-</script>
-
-<script>
+@*<script>
     function addNewAffiliation() {
         var input = document.createElement("input");
         input.setAttribute('class', 'form-control');
@@ -127,14 +119,37 @@
         input.setAttribute('list', 'regionDatalist');
         affiliationBtn.before(input)
     }
-</script>
 
-<script>
     function addNewContact() {
         var input = document.createElement("input");
         input.setAttribute('class', 'form-control');
         input.setAttribute('name', 'Affiliation');
         input.setAttribute('list', 'regionDatalist');
         contactBtn.before(input)
+    }
+</script>*@
+
+<script>
+    function addNewComponent(div) {
+        var newElement = div.children[0].cloneNode(true);
+        updateIndex(newElement);
+        div.append(newElement);
+    }
+
+    function updateIndex(node) {
+        if (node == null)
+            return;
+
+        if (node.name != null)
+        {
+            let result = node.name.match(/[[\d]+]/);
+            var newIndex = parseInt(result[0].replace('[','').replace(']','')) + 1;
+            node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            const element = node.children[i];
+            updateIndex(element);
+        };
     }
 </script>
