@@ -109,7 +109,7 @@ namespace LisasTours.Controllers
                     .ToList();
                 foreach (var contact in company.Contacts)
                 {
-                    contact.ContactType = types.First(_=>_.Name == contact.ContactType.Name);
+                    contact.ContactType = types.First(_ => _.Name == contact.ContactType.Name);
                 }
 
                 _context.Add(company);
@@ -168,29 +168,33 @@ namespace LisasTours.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-                                              [Bind("Id,Name,Site,Information,Contacts")] Company company,
-                                              [Bind(Prefix = "BusinessLine")] string[] businessLines)
+                                              [Bind("Id,Name,Site,Information,Contacts,Affiliates,BusinessLines")] Company company)
         {
             if (id != company.Id)
             {
                 return NotFound();
             }
 
-            var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
-            var businessLinesFromDb = _context.Set<BusinessLine>().ToList();
-
-            // колхоз для получения Id BusinessLine по стоке названия
-            foreach (var b in bl)
-            {
-                var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
-                if (bb != null)
-                {
-                    b.Id = bb.Id;
-                }
-            }
-
             if (ModelState.IsValid)
             {
+                company.Name?.Trim();
+                company.Site = company.Site?.Trim().Replace("http://", "").Replace("https://", "");
+                company.Information?.Trim();
+                foreach (var contact in company.Contacts)
+                {
+                    contact.FirstName?.Trim();
+                    contact.LastName?.Trim();
+                    contact.PatronymicName?.Trim();
+                    contact.Mail?.Trim();
+                }
+
+                company.BusinessLines.RemoveAll(_ => string.IsNullOrWhiteSpace(_.BusinessLine.Name));
+                company.Affiliates.RemoveAll(_ => string.IsNullOrWhiteSpace(_.Region.Name));
+
+                company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
+                                        string.IsNullOrWhiteSpace(_.LastName) &&
+                                        string.IsNullOrWhiteSpace(_.Mail));                
+
                 try
                 {
                     _context.Update(company);

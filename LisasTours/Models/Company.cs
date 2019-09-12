@@ -11,21 +11,21 @@ namespace LisasTours.Models
         public string Site { get; set; }
         public string Information { get; set; }
 
-        public IEnumerable<CompanyBusinessLine> BusinessLines { get; set; }
+        public List<CompanyBusinessLine> BusinessLines { get; set; }
 
-        public IEnumerable<Affiliate> Affiliates { get; set; }
+        public List<Affiliate> Affiliates { get; set; }
 
         [BindProperty]
         public List<Contact> Contacts { get; set; }
 
         [NotMapped]
         public string BusinessLinesString => BusinessLines != null
-            ? string.Join(", ", BusinessLines.Select(_ => _.BusinessLine.Name))
+            ? string.Join(", ", BusinessLines.Select(_ => _?.BusinessLine?.Name))
             : string.Empty;
 
         [NotMapped]
         public string AffiliatesString => Affiliates != null
-            ? string.Join(", ", Affiliates.Select(_ => _.Region.Name))
+            ? string.Join(", ", Affiliates.Select(_ => _?.Region?.Name))
             : string.Empty;
     }
 }
