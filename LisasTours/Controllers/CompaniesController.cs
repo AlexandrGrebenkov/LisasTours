@@ -105,6 +105,12 @@ namespace LisasTours.Controllers
                 company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
                                         string.IsNullOrWhiteSpace(_.Mail));
+                var types = GetNamedCollection<ContactType>(company.Contacts.Select(_ => _.ContactType.Name))
+                    .ToList();
+                foreach (var contact in company.Contacts)
+                {
+                    contact.ContactType = types.First(_=>_.Name == contact.ContactType.Name);
+                }
 
                 _context.Add(company);
                 await _context.SaveChangesAsync();
