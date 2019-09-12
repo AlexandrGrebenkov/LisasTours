@@ -28,9 +28,9 @@
                 <div class="form-group">
                     <label class="control-label">Виды деятельности</label>
                     <div id="divBL">
-                        <input name="BusinessLine" class="form-control" list="datalist1">
+                        <input name="BusinessLine[0]" class="form-control" list="datalist1">
                     </div>
-                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)" id="blBtn">+</button>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)">+</button>
                     <datalist id="datalist1">
                         @foreach (var item in ViewBag.BusinessLine)
                         {
@@ -41,8 +41,10 @@
 
                 <div class="form-group">
                     <label class="control-label">Представительства</label>
-                    <input name="Affiliation" class="form-control" list="regionDatalist">
-                    <button type="button" class="btn btn-secondary" onclick="addNewAffiliation()" id="affiliationBtn">+</button>
+                    <div id="divAffiliation">
+                        <input name="Affiliation[0]" class="form-control" list="regionDatalist">
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divAffiliation)">+</button>
                     <datalist id="regionDatalist">
                         @foreach (var item in ViewBag.Regions)
                         {
@@ -52,32 +54,34 @@
                 </div>
 
                 <div>
-                    <dl class="dl-horizontal">
-                        <dt>Email</dt>
-                        <dd>
-                            <input type="text" name="Contacts[0].Mail" class="form-control" />
-                        </dd>
-                        <dt>Тип</dt>
-                        <dd>
-                            <input name="Contacts[0].ContactType.Name" class="form-control" list="contactTypesDatalist">
-                        </dd>
+                    <div id="divContacts">
+                        <dl class="dl-horizontal">
+                            <dt>Email</dt>
+                            <dd>
+                                <input type="text" name="Contacts[0].Mail" class="form-control" />
+                            </dd>
+                            <dt>Тип</dt>
+                            <dd>
+                                <input name="Contacts[0].ContactType.Name" class="form-control" list="contactTypesDatalist">
+                            </dd>
 
-                        <dt>Фамилия</dt>
-                        <dd>
-                            <input type="text" name="Contacts[0].LastName" class="form-control" />
-                        </dd>
+                            <dt>Фамилия</dt>
+                            <dd>
+                                <input type="text" name="Contacts[0].LastName" class="form-control" />
+                            </dd>
 
-                        <dt>Имя</dt>
-                        <dd>
-                            <input type="text" name="Contacts[0].FirstName" class="form-control" />
-                        </dd>
+                            <dt>Имя</dt>
+                            <dd>
+                                <input type="text" name="Contacts[0].FirstName" class="form-control" />
+                            </dd>
 
-                        <dt>Отчество</dt>
-                        <dd>
-                            <input type="text" name="Contacts[0].PatronymicName" class="form-control" />
-                        </dd>
-                    </dl>
-                    <button type="button" class="btn btn-secondary" onclick="addNewContact()" id="contactBtn">+</button>
+                            <dt>Отчество</dt>
+                            <dd>
+                                <input type="text" name="Contacts[0].PatronymicName" class="form-control" />
+                            </dd>
+                        </dl>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divContacts)">+</button>
                     <datalist id="contactTypesDatalist">
                         @foreach (var item in ViewBag.ContactTypes)
                         {
@@ -111,27 +115,9 @@
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
 
-@*<script>
-    function addNewAffiliation() {
-        var input = document.createElement("input");
-        input.setAttribute('class', 'form-control');
-        input.setAttribute('name', 'Affiliation');
-        input.setAttribute('list', 'regionDatalist');
-        affiliationBtn.before(input)
-    }
-
-    function addNewContact() {
-        var input = document.createElement("input");
-        input.setAttribute('class', 'form-control');
-        input.setAttribute('name', 'Affiliation');
-        input.setAttribute('list', 'regionDatalist');
-        contactBtn.before(input)
-    }
-</script>*@
-
 <script>
     function addNewComponent(div) {
-        var newElement = div.children[0].cloneNode(true);
+        var newElement = div.children[div.children.length - 1].cloneNode(true);
         updateIndex(newElement);
         div.append(newElement);
     }
@@ -140,11 +126,13 @@
         if (node == null)
             return;
 
-        if (node.name != null)
-        {
+        if (node.name != null) {
             let result = node.name.match(/[[\d]+]/);
-            var newIndex = parseInt(result[0].replace('[','').replace(']','')) + 1;
-            node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
+            if (result != null) {
+
+                var newIndex = parseInt(result[0].replace('[', '').replace(']', '')) + 1;
+                node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
+            }
         }
 
         for (let i = 0; i < node.children.length; i++) {
