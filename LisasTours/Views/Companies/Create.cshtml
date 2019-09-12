@@ -126,10 +126,13 @@
         if (node == null)
             return;
 
+        if (node.type == "text") {
+            node.value = '';
+        }
+
         if (node.name != null) {
             let result = node.name.match(/[[\d]+]/);
             if (result != null) {
-
                 var newIndex = parseInt(result[0].replace('[', '').replace(']', '')) + 1;
                 node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
             }
