@@ -11,12 +11,12 @@ namespace LisasTours.Models
         public string Site { get; set; }
         public string Information { get; set; }
 
-        public List<CompanyBusinessLine> BusinessLines { get; set; }
+        public IList<CompanyBusinessLine> BusinessLines { get; set; }
 
-        public List<Affiliate> Affiliates { get; set; }
+        public IList<Affiliate> Affiliates { get; set; }
 
         [BindProperty]
-        public List<Contact> Contacts { get; set; }
+        public IList<Contact> Contacts { get; set; }
 
         [NotMapped]
         public string BusinessLinesString => BusinessLines != null
