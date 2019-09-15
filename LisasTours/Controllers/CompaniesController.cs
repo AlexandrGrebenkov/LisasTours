@@ -100,27 +100,6 @@ namespace LisasTours.Controllers
             return View(vm);
         }
 
-        private IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
-            where T : NamedEntity, new()
-        {
-            var newCollection = names
-                .Where(n => !string.IsNullOrWhiteSpace(n))
-                .Select(str => new T() { Name = str })
-                .ToList();
-            var collectionFromDb = _context.Set<T>().ToList();
-
-            // колхоз для получения Id по стоке названия
-            foreach (var item in newCollection)
-            {
-                var bb = collectionFromDb.FirstOrDefault(_ => _.Name == item.Name);
-                if (bb != null)
-                {
-                    item.Id = bb.Id;
-                }
-            }
-            return newCollection;
-        }
-
         // GET: Companies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -138,8 +117,25 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
+            var vm = new CreateCompanyVM()
+            {
+                Id = id.Value,
+                Name = company.Name,
+                Site = company.Site,
+                Information = company.Information,
+                BusinessLineNames = company.BusinessLines.Select(_ => _.BusinessLine.Name).ToList(),
+                AffiliationNames = company.Affiliates.Select(_ => _.Region.Name).ToList(),
+                Contacts = company.Contacts.Select(_ => new ContactVM()
+                {
+                    FirstName = _.FirstName,
+                    PatronymicName = _.PatronymicName,
+                    LastName = _.LastName,
+                    Mail = _.Mail,
+                    ContactTypeName = _.ContactType.Name
+                }).ToList()
+            };
             CreateViewDataForChanges();
-            return View(company);
+            return View(vm);
         }
 
         // POST: Companies/Edit/5
@@ -148,53 +144,19 @@ namespace LisasTours.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-                                              [Bind("Id,Name,Site,Information,Contacts,Affiliates,BusinessLines")] Company company)
+                                              [Bind("Name,Site,Information,Contacts,BusinessLineNames,AffiliationNames")] CreateCompanyVM vm)
         {
-            if (id != company.Id)
+            try
             {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                company.Name?.Trim();
-                company.Site = company.Site?.Trim().Replace("http://", "").Replace("https://", "");
-                company.Information?.Trim();
-                foreach (var contact in company.Contacts)
-                {
-                    contact.FirstName?.Trim();
-                    contact.LastName?.Trim();
-                    contact.PatronymicName?.Trim();
-                    contact.Mail?.Trim();
-                }
-
-                company.BusinessLines.RemoveAll(_ => string.IsNullOrWhiteSpace(_.BusinessLine.Name));
-                company.Affiliates.RemoveAll(_ => string.IsNullOrWhiteSpace(_.Region.Name));
-
-                company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
-                                        string.IsNullOrWhiteSpace(_.LastName) &&
-                                        string.IsNullOrWhiteSpace(_.Mail));
-
-                try
-                {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var result = await mediator.Send(new UpdateCompanyCommand(id, vm));
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+
+            }
             CreateViewDataForChanges();
-            return View(company);
+            return View(vm);
         }
 
         // GET: Companies/Delete/5

@@ -1,4 +1,4 @@
-﻿@model LisasTours.Models.Company
+﻿@model LisasTours.Models.ViewModels.CreateCompanyVM
 
 @{
     ViewData["Title"] = "Редактирование компании";
@@ -29,12 +29,10 @@
                 <div class="form-group">
                     <label class="control-label">Виды деятельности</label>
                     <div id="divBL">
-                        @for (int i = 0; i < Model.BusinessLines.Count; i++)
+                        @for (int i = 0; i < Model.BusinessLineNames.Count; i++)
                         {
-                            var bl = Model.BusinessLines[i];
-                            <input name="BusinessLines[@i].BusinessLine.Name" class="form-control" list="datalist1" value="@bl.BusinessLine.Name">
-                            <input type="hidden" name="BusinessLines[@i].BusinessLine.Id" value="@bl.BusinessLineId" />
-                            <input type="hidden" name="BusinessLines[@i].Id" value="@bl.Id" />
+                            var bl = Model.BusinessLineNames[i];
+                            <input name="BusinessLineNames[@i]" class="form-control" list="datalist1" value="@bl">
                         }
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)">+</button>
@@ -49,12 +47,10 @@
                 <div class="form-group">
                     <label class="control-label">Представительства</label>
                     <div id="divAffiliation">
-                        @for (int i = 0; i < Model.Affiliates.Count; i++)
+                        @for (int i = 0; i < Model.AffiliationNames.Count; i++)
                         {
-                            var affiliate = Model.Affiliates[i];
-                            <input name="Affiliates[@i].Region.Name" class="form-control" list="regionDatalist" value="@affiliate.Region.Name">
-                            <input type="hidden" name="Affiliates[@i].Region.Id" value="@affiliate.RegionId"/>
-                            <input type="hidden" name="Affiliates[@i].Id" value="@affiliate.Id"/>
+                            var affiliate = Model.AffiliationNames[i];
+                            <input name="AffiliationNames[@i]" class="form-control" list="regionDatalist" value="@affiliate">
                         }
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="addNewComponent(divAffiliation)">+</button>
@@ -80,7 +76,7 @@
                                 </dd>
                                 <dt>Тип</dt>
                                 <dd>
-                                    <input name="Contacts[@i].ContactType.Name" class="form-control" list="contactTypesDatalist" value="@contact.ContactType.Name">
+                                    <input name="Contacts[@i].ContactTypeName" class="form-control" list="contactTypesDatalist" value="@contact.ContactTypeName">
                                 </dd>
 
                                 <dt>Фамилия</dt>
@@ -98,8 +94,6 @@
                                     <input type="text" name="Contacts[@i].PatronymicName" class="form-control" value="@contact.PatronymicName" />
                                 </dd>
                             </dl>
-                            <input type="hidden" name="Contacts[@i].Id" value="@contact.Id" />
-                            <input type="hidden" name="Contacts[@i].ContactType.Id" value="@contact.ContactType.Id" />
                         }
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="addNewComponent(divContacts)">+</button>

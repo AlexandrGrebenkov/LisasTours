@@ -4,6 +4,7 @@ namespace LisasTours.Models.ViewModels
 {
     public class CreateCompanyVM
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Site { get; set; }
         public string Information { get; set; }
@@ -12,6 +13,6 @@ namespace LisasTours.Models.ViewModels
 
         public IList<string> AffiliationNames { get; set; }
 
-        public IEnumerable<ContactVM> Contacts { get; set; }
+        public IList<ContactVM> Contacts { get; set; }
     }
 }

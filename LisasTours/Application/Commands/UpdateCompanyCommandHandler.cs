@@ -7,16 +7,16 @@ using MediatR;
 
 namespace LisasTours.Application.Commands
 {
-    public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, bool>
+    public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, bool>
     {
         private readonly ApplicationDbContext context;
 
-        public CreateCompanyCommandHandler(ApplicationDbContext context)
+        public UpdateCompanyCommandHandler(ApplicationDbContext context)
         {
             this.context = context;
         }
 
-        public async Task<bool> Handle(CreateCompanyCommand request, CancellationToken cancellationToken)
+        public async Task<bool> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
         {
             var vm = request.CreateCompanyVM;
             vm.Site = vm.Site?.Trim().Replace("http://", "").Replace("https://", "");
@@ -46,6 +46,7 @@ namespace LisasTours.Application.Commands
                         ContactType = new ContactType() { Name = c.ContactTypeName }
                     }).ToList()
             };
+            company.Id = request.Id;
 
             var types = dbHelper.GetNamedCollection<ContactType>(company.Contacts.Select(_ => _.ContactType.Name))
                     .ToList();
@@ -54,7 +55,7 @@ namespace LisasTours.Application.Commands
                 contact.ContactType = types.First(_ => _.Name == contact.ContactType.Name);
             }
 
-            context.Add(company);
+            context.Update(company);
             await context.SaveChangesAsync();
             return true;
         }
