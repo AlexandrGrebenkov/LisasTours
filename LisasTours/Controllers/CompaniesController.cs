@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LisasTours.Application.Commands;
 using LisasTours.Data;
 using LisasTours.Models;
 using LisasTours.Models.Base;
 using LisasTours.Models.ViewModels;
 using LisasTours.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,12 +19,17 @@ namespace LisasTours.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ExcelExporter Exporter;
         private readonly CompanyFilterService CompanyFilterService;
+        private readonly IMediator mediator;
 
-        public CompaniesController(ApplicationDbContext context, ExcelExporter exporter, CompanyFilterService companyFilterService)
+        public CompaniesController(ApplicationDbContext context,
+                                   ExcelExporter exporter,
+                                   CompanyFilterService companyFilterService,
+                                   IMediator mediator)
         {
             _context = context;
             Exporter = exporter;
             CompanyFilterService = companyFilterService;
+            this.mediator = mediator;
         }
 
         // GET: Companies
@@ -77,47 +85,19 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,Contacts")] Company company,
-                                                [Bind(Prefix = "BusinessLine")] string[] businessLines,
-                                                [Bind(Prefix = "Affiliation")] string[] affiliations)
+        public async Task<IActionResult> Create([Bind("Name,Site,Information,Contacts,BusinessLineNames,AffiliationNames")] CreateCompanyVM vm)
         {
-            if (ModelState.IsValid)
+            try
             {
-                company.Name?.Trim();
-                company.Site = company.Site?.Trim().Replace("http://", "").Replace("https://", "");
-                company.Information?.Trim();
-                foreach (var contact in company.Contacts)
-                {
-                    contact.FirstName?.Trim();
-                    contact.LastName?.Trim();
-                    contact.PatronymicName?.Trim();
-                    contact.Mail?.Trim();
-                }
-
-                company.BusinessLines = GetNamedCollection<BusinessLine>(businessLines)
-                    .Select(_ => new CompanyBusinessLine() { BusinessLine = _ })
-                    .ToList();
-
-                company.Affiliates = GetNamedCollection<Region>(affiliations)
-                    .Select(_ => new Affiliate() { Region = _ })
-                    .ToList();
-
-                company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
-                                        string.IsNullOrWhiteSpace(_.LastName) &&
-                                        string.IsNullOrWhiteSpace(_.Mail));
-                var types = GetNamedCollection<ContactType>(company.Contacts.Select(_ => _.ContactType.Name))
-                    .ToList();
-                foreach (var contact in company.Contacts)
-                {
-                    contact.ContactType = types.First(_ => _.Name == contact.ContactType.Name);
-                }
-
-                _context.Add(company);
-                await _context.SaveChangesAsync();
+                var result = await mediator.Send(new CreateCompanyCommand(vm));
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+
+            }
             CreateViewDataForChanges();
-            return View(company);
+            return View(vm);
         }
 
         private IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
@@ -193,7 +173,7 @@ namespace LisasTours.Controllers
 
                 company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
                                         string.IsNullOrWhiteSpace(_.LastName) &&
-                                        string.IsNullOrWhiteSpace(_.Mail));                
+                                        string.IsNullOrWhiteSpace(_.Mail));
 
                 try
                 {

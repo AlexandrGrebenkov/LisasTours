@@ -1,4 +1,4 @@
-﻿@model LisasTours.Models.Company
+﻿@model LisasTours.Models.ViewModels.CreateCompanyVM
 
 @{
     ViewData["Title"] = "Добавление компании";
@@ -28,7 +28,7 @@
                 <div class="form-group">
                     <label class="control-label">Виды деятельности</label>
                     <div id="divBL">
-                        <input name="BusinessLine[0]" class="form-control" list="datalist1">
+                        <input name="BusinessLineNames[0]" class="form-control" list="datalist1">
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)">+</button>
                     <datalist id="datalist1">
@@ -42,7 +42,7 @@
                 <div class="form-group">
                     <label class="control-label">Представительства</label>
                     <div id="divAffiliation">
-                        <input name="Affiliation[0]" class="form-control" list="regionDatalist">
+                        <input name="AffiliationNames[0]" class="form-control" list="regionDatalist">
                     </div>
                     <button type="button" class="btn btn-secondary" onclick="addNewComponent(divAffiliation)">+</button>
                     <datalist id="regionDatalist">
@@ -62,7 +62,7 @@
                             </dd>
                             <dt>Тип</dt>
                             <dd>
-                                <input name="Contacts[0].ContactType.Name" class="form-control" list="contactTypesDatalist">
+                                <input name="Contacts[0].ContactTypeName" class="form-control" list="contactTypesDatalist">
                             </dd>
 
                             <dt>Фамилия</dt>
