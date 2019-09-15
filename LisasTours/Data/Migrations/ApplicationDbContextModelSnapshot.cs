@@ -93,9 +93,7 @@ namespace LisasTours.Data.Migrations
 
             modelBuilder.Entity("LisasTours.Models.Contact", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<int>("Id");
 
                     b.Property<int>("CompanyId");
 
@@ -109,7 +107,7 @@ namespace LisasTours.Data.Migrations
 
                     b.Property<string>("PatronymicName");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id", "CompanyId");
 
                     b.HasIndex("CompanyId");
 

@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using LisasTours.Application.Commands;
 using LisasTours.Data;
 using LisasTours.Models;
 using LisasTours.Models.Base;
 using LisasTours.Models.ViewModels;
 using LisasTours.Services;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,12 +19,17 @@ namespace LisasTours.Controllers
         private readonly ApplicationDbContext _context;
         private readonly ExcelExporter Exporter;
         private readonly CompanyFilterService CompanyFilterService;
+        private readonly IMediator mediator;
 
-        public CompaniesController(ApplicationDbContext context, ExcelExporter exporter, CompanyFilterService companyFilterService)
+        public CompaniesController(ApplicationDbContext context,
+                                   ExcelExporter exporter,
+                                   CompanyFilterService companyFilterService,
+                                   IMediator mediator)
         {
             _context = context;
             Exporter = exporter;
             CompanyFilterService = companyFilterService;
+            this.mediator = mediator;
         }
 
         // GET: Companies
@@ -77,68 +85,19 @@ namespace LisasTours.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Site,Information,Contacts")] Company company,
-                                                [Bind(Prefix = "BusinessLine")] string[] businessLines,
-                                                [Bind(Prefix = "Affiliation")] string[] affiliations)
+        public async Task<IActionResult> Create([Bind("Name,Site,Information,Contacts,BusinessLineNames,AffiliationNames")] CreateCompanyVM vm)
         {
-            if (ModelState.IsValid)
+            try
             {
-                company.Name?.Trim();
-                company.Site = company.Site?.Trim().Replace("http://", "").Replace("https://", "");
-                company.Information?.Trim();
-                foreach (var contact in company.Contacts)
-                {
-                    contact.FirstName?.Trim();
-                    contact.LastName?.Trim();
-                    contact.PatronymicName?.Trim();
-                    contact.Mail?.Trim();
-                }
-
-                company.BusinessLines = GetNamedCollection<BusinessLine>(businessLines)
-                    .Select(_ => new CompanyBusinessLine() { BusinessLine = _ })
-                    .ToList();
-
-                company.Affiliates = GetNamedCollection<Region>(affiliations)
-                    .Select(_ => new Affiliate() { Region = _ })
-                    .ToList();
-
-                company.Contacts.RemoveAll(_ => string.IsNullOrWhiteSpace(_.FirstName) &&
-                                        string.IsNullOrWhiteSpace(_.LastName) &&
-                                        string.IsNullOrWhiteSpace(_.Mail));
-                var types = GetNamedCollection<ContactType>(company.Contacts.Select(_ => _.ContactType.Name))
-                    .ToList();
-                foreach (var contact in company.Contacts)
-                {
-                    contact.ContactType = types.First(_=>_.Name == contact.ContactType.Name);
-                }
-
-                _context.Add(company);
-                await _context.SaveChangesAsync();
+                var result = await mediator.Send(new CreateCompanyCommand(vm));
                 return RedirectToAction(nameof(Index));
             }
-            CreateViewDataForChanges();
-            return View(company);
-        }
-
-        private IEnumerable<T> GetNamedCollection<T>(IEnumerable<string> names)
-            where T : NamedEntity, new()
-        {
-            var newCollection = names
-                .Where(n => !string.IsNullOrWhiteSpace(n))
-                .Select(str => new T() { Name = str })
-                .ToList();
-            var collectionFromDb = _context.Set<T>().ToList();
-
-            // колхоз для получения Id по стоке названия
-            foreach (var item in newCollection)
+            catch (Exception ex)
             {
-                var bb = collectionFromDb.FirstOrDefault(_ => _.Name == item.Name);
-                if (bb != null)
-                {
-                    item.Id = bb.Id;
-                }
+
             }
-            return newCollection;
+            CreateViewDataForChanges();
+            return View(vm);
         }
 
         // GET: Companies/Edit/5
@@ -158,8 +117,25 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
+            var vm = new CreateCompanyVM()
+            {
+                Id = id.Value,
+                Name = company.Name,
+                Site = company.Site,
+                Information = company.Information,
+                BusinessLineNames = company.BusinessLines.Select(_ => _.BusinessLine.Name).ToList(),
+                AffiliationNames = company.Affiliates.Select(_ => _.Region.Name).ToList(),
+                Contacts = company.Contacts.Select(_ => new ContactVM()
+                {
+                    FirstName = _.FirstName,
+                    PatronymicName = _.PatronymicName,
+                    LastName = _.LastName,
+                    Mail = _.Mail,
+                    ContactTypeName = _.ContactType.Name
+                }).ToList()
+            };
             CreateViewDataForChanges();
-            return View(company);
+            return View(vm);
         }
 
         // POST: Companies/Edit/5
@@ -168,49 +144,19 @@ namespace LisasTours.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,
-                                              [Bind("Id,Name,Site,Information,Contacts")] Company company,
-                                              [Bind(Prefix = "BusinessLine")] string[] businessLines)
+                                              [Bind("Name,Site,Information,Contacts,BusinessLineNames,AffiliationNames")] CreateCompanyVM vm)
         {
-            if (id != company.Id)
+            try
             {
-                return NotFound();
-            }
-
-            var bl = businessLines.Select(str => new BusinessLine() { Name = str }).ToList();
-            var businessLinesFromDb = _context.Set<BusinessLine>().ToList();
-
-            // колхоз для получения Id BusinessLine по стоке названия
-            foreach (var b in bl)
-            {
-                var bb = businessLinesFromDb.FirstOrDefault(_ => _.Name == b.Name);
-                if (bb != null)
-                {
-                    b.Id = bb.Id;
-                }
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(company);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CompanyExists(company.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                var result = await mediator.Send(new UpdateCompanyCommand(id, vm));
                 return RedirectToAction(nameof(Index));
             }
+            catch (Exception ex)
+            {
+
+            }
             CreateViewDataForChanges();
-            return View(company);
+            return View(vm);
         }
 
         // GET: Companies/Delete/5

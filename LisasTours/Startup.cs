@@ -13,6 +13,8 @@ using LisasTours.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using LisasTours.Services;
+using MediatR;
+using System.Reflection;
 
 namespace LisasTours
 {
@@ -37,9 +39,11 @@ namespace LisasTours
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
-                    Configuration.GetConnectionString("MyDb")));
+                    Configuration.GetConnectionString("LocalDb")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddMediatR(Assembly.GetExecutingAssembly());
 
             services.AddSingleton<ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();

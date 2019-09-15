@@ -1,12 +1,11 @@
-﻿@model LisasTours.Models.Company
+﻿@model LisasTours.Models.ViewModels.CreateCompanyVM
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Редактирование компании";
 }
 
-<h2>Edit</h2>
+<h2>Редактирование компании</h2>
 
-<h4>Company</h4>
 <hr />
 <div class="row">
     <form asp-action="Edit">
@@ -14,23 +13,29 @@
             <div class="col-md-4">
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <input type="hidden" asp-for="Id" />
+
                 <div class="form-group">
-                    <label asp-for="Name" class="control-label"></label>
+                    <label class="control-label">Название</label>
                     <input asp-for="Name" class="form-control" />
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
-                    <label asp-for="Site" class="control-label"></label>
+                    <label class="control-label">Сайт</label>
                     <input asp-for="Site" class="form-control" />
                     <span asp-validation-for="Site" class="text-danger"></span>
                 </div>
+
                 <div class="form-group">
                     <label class="control-label">Виды деятельности</label>
-                    @foreach (var bl in Model.BusinessLines)
-                    {
-                        <input name="BusinessLine" class="form-control" list="datalist1" value="@bl.BusinessLine.Name">
-                    }
-                    <button type="button" class="btn btn-secondary" onclick="addNewBusinessLine()" id="blBtn">+</button>
+                    <div id="divBL">
+                        @for (int i = 0; i < Model.BusinessLineNames.Count; i++)
+                        {
+                            var bl = Model.BusinessLineNames[i];
+                            <input name="BusinessLineNames[@i]" class="form-control" list="datalist1" value="@bl">
+                        }
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divBL)">+</button>
                     <datalist id="datalist1">
                         @foreach (var item in ViewBag.BusinessLine)
                         {
@@ -38,38 +43,72 @@
                         }
                     </datalist>
                 </div>
+
+                <div class="form-group">
+                    <label class="control-label">Представительства</label>
+                    <div id="divAffiliation">
+                        @for (int i = 0; i < Model.AffiliationNames.Count; i++)
+                        {
+                            var affiliate = Model.AffiliationNames[i];
+                            <input name="AffiliationNames[@i]" class="form-control" list="regionDatalist" value="@affiliate">
+                        }
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divAffiliation)">+</button>
+                    <datalist id="regionDatalist">
+                        @foreach (var item in ViewBag.Regions)
+                        {
+                            <option value="@item.Name" />
+                        }
+                    </datalist>
+                </div>
+
             </div>
             <div class="col-md-4">
                 <div>
-                    <table class="table">
-                        <tr>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Email</th>
-                            <th>Type</th>
-                        </tr>
+                    <div id="divContacts">
                         @for (int i = 0; i < Model.Contacts.Count; i++)
                         {
-                            <tr>
-                                <td>
-                                    <input type="text" name="Contacts[@i].FirstName" value="@(Model.Contacts[i].FirstName)" />
-                                </td>
-                                <td>
-                                    <input type="text" name="Contacts[@i].LastName" value="@(Model.Contacts[i].LastName)" />
-                                </td>
-                                <td>
-                                    <input type="text" name="Contacts[@i].Mail" value="@(Model.Contacts[i].Mail)" />
-                                </td>
-                                <td>
-                                    <select name="Contacts[@i].ContactTypeId" asp-items="ViewBag.ContactTypes"></select>
-                                </td>
-                            </tr>
+                            var contact = Model.Contacts[i];
+                            <dl class="dl-horizontal">
+                                <dt>Email</dt>
+                                <dd>
+                                    <input type="text" name="Contacts[@i].Mail" class="form-control" value="@contact.Mail" />
+                                </dd>
+                                <dt>Тип</dt>
+                                <dd>
+                                    <input name="Contacts[@i].ContactTypeName" class="form-control" list="contactTypesDatalist" value="@contact.ContactTypeName">
+                                </dd>
+
+                                <dt>Фамилия</dt>
+                                <dd>
+                                    <input type="text" name="Contacts[@i].LastName" class="form-control" value="@contact.LastName" />
+                                </dd>
+
+                                <dt>Имя</dt>
+                                <dd>
+                                    <input type="text" name="Contacts[@i].FirstName" class="form-control" value="@contact.FirstName" />
+                                </dd>
+
+                                <dt>Отчество</dt>
+                                <dd>
+                                    <input type="text" name="Contacts[@i].PatronymicName" class="form-control" value="@contact.PatronymicName" />
+                                </dd>
+                            </dl>
                         }
-                    </table>
+                    </div>
+                    <button type="button" class="btn btn-secondary" onclick="addNewComponent(divContacts)">+</button>
+                    <datalist id="contactTypesDatalist">
+                        @foreach (var item in ViewBag.ContactTypes)
+                        {
+                            <option value="@item.Name" />
+                        }
+                    </datalist>
                 </div>
-                <div class="form-group">
-                    <label asp-for="Information" class="control-label"></label>
-                    <textarea asp-for="Information" class="form-control"></textarea>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="control-label">Описание</label>
+                        <textarea asp-for="Information" class="form-control">@Model.Information</textarea>
+                    </div>
                 </div>
             </div>
         </div>
@@ -79,7 +118,7 @@
                     <a asp-action="Index">Back to List</a>
                 </div>
                 <div class="form-group">
-                    <input type="submit" value="Save" class="btn btn-success" />
+                    <input type="submit" value="Сохранить" class="btn btn-success" />
                 </div>
             </div>
         </div>
@@ -92,11 +131,31 @@
 }
 
 <script>
-    function addNewBusinessLine() {
-        var input = document.createElement("input");
-        input.setAttribute('class', 'form-control');
-        input.setAttribute('name', 'BusinessLine');
-        input.setAttribute('list', 'datalist1');
-        blBtn.before(input)
+    function addNewComponent(div) {
+        var newElement = div.children[div.children.length - 1].cloneNode(true);
+        updateIndex(newElement);
+        div.append(newElement);
+    }
+
+    function updateIndex(node) {
+        if (node == null)
+            return;
+
+        if (node.type == "text") {
+            node.value = '';
+        }
+
+        if (node.name != null) {
+            let result = node.name.match(/[[\d]+]/);
+            if (result != null) {
+                var newIndex = parseInt(result[0].replace('[', '').replace(']', '')) + 1;
+                node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
+            }
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            const element = node.children[i];
+            updateIndex(element);
+        };
     }
 </script>

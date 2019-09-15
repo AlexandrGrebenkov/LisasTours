@@ -9,12 +9,10 @@ namespace LisasTours.Models.ViewModels
         public string Site { get; set; }
         public string Information { get; set; }
 
-        public int BusinessLineId { get; set; }
-        public string BusinessLineName { get; set; }
+        public IList<string> BusinessLineNames { get; set; }
 
-        public int RegionId { get; set; }
-        public string RegionName { get; set; }
+        public IList<string> AffiliationNames { get; set; }
 
-        public IEnumerable<Contact> Contacts { get; set; }
+        public IList<ContactVM> Contacts { get; set; }
     }
 }
