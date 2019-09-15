@@ -23,9 +23,6 @@ namespace LisasTours.Data
             modelBuilder.Entity<Region>(entity => entity.HasIndex(e => e.Name).IsUnique());
             modelBuilder.Entity<BusinessLine>(entity => entity.HasIndex(e => e.Name).IsUnique());
 
-            modelBuilder.Entity<Contact>()
-                .HasKey(c => new { c.Id, c.CompanyId });
-
             base.OnModelCreating(modelBuilder);
         }
     }
