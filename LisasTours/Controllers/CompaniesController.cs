@@ -136,9 +136,7 @@ namespace LisasTours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await context.Company.FindAsync(id);
-            context.Company.Remove(company);
-            await context.SaveChangesAsync();
+            await mediator.Send(new DeleteCompanyCommand(id));
             return RedirectToAction(nameof(Index));
         }
 
