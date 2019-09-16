@@ -15,6 +15,11 @@ using Microsoft.Extensions.DependencyInjection;
 using LisasTours.Services;
 using MediatR;
 using System.Reflection;
+using LisasTours.Application.Behaviors;
+using LisasTours.Application.Validations;
+using FluentValidation;
+using LisasTours.Application.Commands;
+using FluentValidation.AspNetCore;
 
 namespace LisasTours
 {
@@ -45,10 +50,16 @@ namespace LisasTours
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
 
+            services.AddMvc()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddFluentValidation();
+
+            //-------Validation--------
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient<IValidator<CreateCompanyCommand>, CreateCompanyCommandValidator>();
+
             services.AddSingleton<ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();
-
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
