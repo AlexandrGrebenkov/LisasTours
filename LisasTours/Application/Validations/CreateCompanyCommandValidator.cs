@@ -7,7 +7,9 @@ namespace LisasTours.Application.Validations
     {
         public CreateCompanyCommandValidator()
         {
-            RuleFor(cmd => cmd.CreateCompanyVM.Name).NotEmpty();
+            RuleFor(cmd => cmd.CreateCompanyVM.Name)
+                .NotEmpty()
+                .WithMessage("Название компании не может быть пустым");
         }
     }
 }

@@ -14,7 +14,7 @@ namespace LisasTours.Application.Behaviors
 
         public ValidationBehavior(IEnumerable<IValidator<TRequest>> validators)
         {
-            _validators =  validators.ToArray();
+            _validators = validators.ToArray();
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken, RequestHandlerDelegate<TResponse> next)
@@ -27,8 +27,8 @@ namespace LisasTours.Application.Behaviors
 
             if (failures.Any())
             {
-                throw new Exception(
-                    $"Command Validation Errors for type {typeof(TRequest).Name}", new ValidationException("Validation exception", failures));
+                throw new ValidationException(
+                    $"Command Validation Errors for type {typeof(TRequest).Name}", failures);
             }
 
             return await next();
