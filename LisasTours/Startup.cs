@@ -20,6 +20,7 @@ using LisasTours.Application.Validations;
 using FluentValidation;
 using LisasTours.Application.Commands;
 using FluentValidation.AspNetCore;
+using LisasTours.Application.Queries;
 
 namespace LisasTours
 {
@@ -60,6 +61,7 @@ namespace LisasTours
 
             services.AddSingleton<ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();
+            services.AddScoped<ICompanyQueries, CompanyQueries>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

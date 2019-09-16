@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using FluentValidation;
 using LisasTours.Application.Commands;
+using LisasTours.Application.Queries;
 using LisasTours.Data;
 using LisasTours.Models;
 using LisasTours.Models.ViewModels;
@@ -18,34 +19,29 @@ namespace LisasTours.Controllers
         private readonly ExcelExporter Exporter;
         private readonly CompanyFilterService CompanyFilterService;
         private readonly IMediator mediator;
+        private readonly ICompanyQueries companyQueries;
 
         public CompaniesController(ApplicationDbContext context,
                                    ExcelExporter exporter,
                                    CompanyFilterService companyFilterService,
-                                   IMediator mediator)
+                                   IMediator mediator, ICompanyQueries companyQueries)
         {
             _context = context;
             Exporter = exporter;
             CompanyFilterService = companyFilterService;
             this.mediator = mediator;
+            this.companyQueries = companyQueries;
         }
 
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Company
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region);
-            return View(await applicationDbContext.ToListAsync());
+            var companies = await companyQueries.GetCompanies(null, null);
+            return View(companies);
         }
 
         public async Task<IActionResult> Search(CompanySearchVM searchVM)
         {
-            var companies = await _context.Company
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Where(CompanyFilterService.CreateCompanyFilterExpression(searchVM))
-                .ToListAsync();
+            var companies = await companyQueries.GetCompanies(null, searchVM);
             return View(nameof(Index), companies);
         }
 
@@ -55,12 +51,7 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-
-            var company = await _context.Company
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = await companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -97,12 +88,7 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-
-            var company = await _context.Company
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = await companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -150,12 +136,7 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-
-            var company = await _context.Company
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var company = await companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -174,20 +155,9 @@ namespace LisasTours.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CompanyExists(int id)
-        {
-            return _context.Company.Any(e => e.Id == id);
-        }
-
         public async Task<IActionResult> Export()
         {
-            var companies = await _context.Company
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.BusinessLines).ThenInclude(bl => bl.BusinessLine)
-                .Include(c => c.Affiliates).ThenInclude(a => a.Region)
-                .Include(c => c.Contacts).ThenInclude(c => c.ContactType)
-                //.Where(CreateFilterExpression(searchVM))
-                .ToListAsync();
+            var companies = await companyQueries.GetCompanies(null, null);
             var report = await Exporter.GenerateCompaniesReport(companies);
             return File(report, "application/vnd.ms-excel", "Компании.xslx");
         }
