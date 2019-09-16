@@ -1,5 +1,5 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands;
 using LisasTours.Application.Queries;
@@ -9,28 +9,28 @@ using LisasTours.Models.ViewModels;
 using LisasTours.Services;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LisasTours.Controllers
 {
     public class CompaniesController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly ExcelExporter Exporter;
-        private readonly CompanyFilterService CompanyFilterService;
+        private readonly ApplicationDbContext context;
+        private readonly ExcelExporter exporter;
+        private readonly IMapper mapper;
         private readonly IMediator mediator;
         private readonly ICompanyQueries companyQueries;
 
         public CompaniesController(ApplicationDbContext context,
                                    ExcelExporter exporter,
-                                   CompanyFilterService companyFilterService,
-                                   IMediator mediator, ICompanyQueries companyQueries)
+                                   IMediator mediator,
+                                   ICompanyQueries companyQueries,
+                                   IMapper mapper)
         {
-            _context = context;
-            Exporter = exporter;
-            CompanyFilterService = companyFilterService;
+            this.context = context;
+            this.exporter = exporter;
             this.mediator = mediator;
             this.companyQueries = companyQueries;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
@@ -77,6 +77,7 @@ namespace LisasTours.Controllers
             }
             catch (ValidationException ex)
             {
+                // TODO: Добавить на View отображение результата валидации (пока не знаю как)
                 CreateViewDataForChanges();
                 return View(vm);
             }
@@ -93,23 +94,8 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-            var vm = new CreateCompanyVM()
-            {
-                Id = id.Value,
-                Name = company.Name,
-                Site = company.Site,
-                Information = company.Information,
-                BusinessLineNames = company.BusinessLines.Select(_ => _.BusinessLine.Name).ToList(),
-                AffiliationNames = company.Affiliates.Select(_ => _.Region.Name).ToList(),
-                Contacts = company.Contacts.Select(_ => new ContactVM()
-                {
-                    FirstName = _.FirstName,
-                    PatronymicName = _.PatronymicName,
-                    LastName = _.LastName,
-                    Mail = _.Mail,
-                    ContactTypeName = _.ContactType.Name
-                }).ToList()
-            };
+
+            var vm = mapper.Map<CreateCompanyVM>(company);
             CreateViewDataForChanges();
             return View(vm);
         }
@@ -125,6 +111,7 @@ namespace LisasTours.Controllers
             }
             catch (ValidationException ex)
             {
+                // TODO: Добавить на View отображение результата валидации (пока не знаю как)
                 CreateViewDataForChanges();
                 return View(vm);
             }
@@ -149,24 +136,24 @@ namespace LisasTours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var company = await _context.Company.FindAsync(id);
-            _context.Company.Remove(company);
-            await _context.SaveChangesAsync();
+            var company = await context.Company.FindAsync(id);
+            context.Company.Remove(company);
+            await context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         public async Task<IActionResult> Export()
         {
             var companies = await companyQueries.GetCompanies(null, null);
-            var report = await Exporter.GenerateCompaniesReport(companies);
+            var report = await exporter.GenerateCompaniesReport(companies);
             return File(report, "application/vnd.ms-excel", "Компании.xslx");
         }
 
         private void CreateViewDataForChanges()
         {
-            ViewData["BusinessLine"] = _context.Set<BusinessLine>();
-            ViewData["Regions"] = _context.Set<Region>();
-            ViewData["ContactTypes"] = _context.Set<ContactType>();
+            ViewData["BusinessLine"] = context.Set<BusinessLine>();
+            ViewData["Regions"] = context.Set<Region>();
+            ViewData["ContactTypes"] = context.Set<ContactType>();
         }
     }
 }

@@ -1,26 +1,22 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.Reflection;
+using AutoMapper;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using LisasTours.Application.Behaviors;
+using LisasTours.Application.Commands;
+using LisasTours.Application.Queries;
+using LisasTours.Application.Validations;
 using LisasTours.Data;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using LisasTours.Services;
 using MediatR;
-using System.Reflection;
-using LisasTours.Application.Behaviors;
-using LisasTours.Application.Validations;
-using FluentValidation;
-using LisasTours.Application.Commands;
-using FluentValidation.AspNetCore;
-using LisasTours.Application.Queries;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LisasTours
 {
@@ -50,6 +46,7 @@ namespace LisasTours
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
