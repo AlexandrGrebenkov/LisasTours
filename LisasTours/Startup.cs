@@ -15,6 +15,10 @@ using Microsoft.Extensions.DependencyInjection;
 using LisasTours.Services;
 using MediatR;
 using System.Reflection;
+using LisasTours.Application.Behaviors;
+using LisasTours.Application.Validations;
+using FluentValidation;
+using LisasTours.Application.Commands;
 
 namespace LisasTours
 {
@@ -44,6 +48,8 @@ namespace LisasTours
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
+            services.AddScoped(typeof(IPipelineBehavior<,>),typeof(ValidationBehavior<,>));
+            services.AddSingleton(typeof(IValidator<CreateCompanyCommand>), new CreateCompanyCommandValidator());
 
             services.AddSingleton<ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 using LisasTours.Application.Commands;
@@ -92,12 +93,12 @@ namespace LisasTours.Controllers
                 var result = await mediator.Send(new CreateCompanyCommand(vm));
                 return RedirectToAction(nameof(Index));
             }
-            catch (Exception ex)
+            catch (ValidationException ex)
             {
-
+                
+                CreateViewDataForChanges();
+                return View(vm);
             }
-            CreateViewDataForChanges();
-            return View(vm);
         }
 
         // GET: Companies/Edit/5
