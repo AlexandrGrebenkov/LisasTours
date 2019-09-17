@@ -56,7 +56,7 @@ namespace LisasTours
             services.AddScoped(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<IValidator<CreateCompanyCommand>, CreateCompanyCommandValidator>();
 
-            services.AddSingleton<ExcelExporter>();
+            services.AddSingleton<IExporter, ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();
             services.AddScoped<ICompanyQueries, CompanyQueries>();
         }

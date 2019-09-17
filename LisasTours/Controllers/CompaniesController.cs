@@ -1,10 +1,8 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands;
 using LisasTours.Application.Queries;
-using LisasTours.Data;
-using LisasTours.Models;
 using LisasTours.Models.ViewModels;
 using LisasTours.Services;
 using MediatR;
@@ -14,14 +12,12 @@ namespace LisasTours.Controllers
 {
     public class CompaniesController : Controller
     {
-        private readonly ApplicationDbContext context;
-        private readonly ExcelExporter exporter;
+        private readonly IExporter exporter;
         private readonly IMapper mapper;
         private readonly IMediator mediator;
         private readonly ICompanyQueries companyQueries;
 
-        public CompaniesController(ApplicationDbContext context,
-                                   ExcelExporter exporter,
+        public CompaniesController(IExporter exporter,
                                    IMediator mediator,
                                    ICompanyQueries companyQueries,
                                    IMapper mapper)

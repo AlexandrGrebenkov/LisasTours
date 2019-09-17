@@ -8,7 +8,7 @@ using Syncfusion.XlsIO;
 
 namespace LisasTours.Services
 {
-    public class ExcelExporter
+    public class ExcelExporter : IExporter
     {
         public async Task<byte[]> GenerateCompaniesReport(IEnumerable<Company> companies)
         {
