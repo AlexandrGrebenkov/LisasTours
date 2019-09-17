@@ -63,5 +63,20 @@ namespace LisasTours.Application.Queries
                 .Include(c => c.Contacts).ThenInclude(contact => contact.ContactType)
                 .FirstOrDefaultAsync(m => m.Id == id);
         }
+
+        public IEnumerable<BusinessLine> GetBusinessLines()
+        {
+            return _context.Set<BusinessLine>();
+        }
+
+        public IEnumerable<Region> GetRegions()
+        {
+            return _context.Set<Region>();
+        }
+
+        public IEnumerable<ContactType> GetContactTypes()
+        {
+            return _context.Set<ContactType>();
+        }
     }
 }

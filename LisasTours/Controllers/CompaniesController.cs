@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands;
@@ -26,7 +26,6 @@ namespace LisasTours.Controllers
                                    ICompanyQueries companyQueries,
                                    IMapper mapper)
         {
-            this.context = context;
             this.exporter = exporter;
             this.mediator = mediator;
             this.companyQueries = companyQueries;
@@ -149,9 +148,9 @@ namespace LisasTours.Controllers
 
         private void CreateViewDataForChanges()
         {
-            ViewData["BusinessLine"] = context.Set<BusinessLine>();
-            ViewData["Regions"] = context.Set<Region>();
-            ViewData["ContactTypes"] = context.Set<ContactType>();
+            ViewData["BusinessLine"] = companyQueries.GetBusinessLines();
+            ViewData["Regions"] = companyQueries.GetRegions();
+            ViewData["ContactTypes"] = companyQueries.GetContactTypes();
         }
     }
 }

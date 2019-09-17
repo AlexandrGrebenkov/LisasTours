@@ -9,5 +9,10 @@ namespace LisasTours.Application.Queries
     {
         Task<Company> GetCompany(int id);
         Task<IEnumerable<Company>> GetCompanies(PagingVM paging = null, CompanySearchVM search = null);
+
+        IEnumerable<BusinessLine> GetBusinessLines();
+        IEnumerable<Region> GetRegions();
+        IEnumerable<ContactType> GetContactTypes();
+
     }
 }
