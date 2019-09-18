@@ -1,23 +1,22 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using FluentValidation;
+using LisasTours.Application.Commands.Contacts;
 using LisasTours.Application.Queries;
-using LisasTours.Data;
-using LisasTours.Models;
+using LisasTours.Models.ViewModels;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 
 namespace LisasTours.Controllers
 {
     public class ContactsController : Controller
     {
-        private readonly ApplicationDbContext _context;
         private readonly IContactsQueries contactsQueries;
+        private readonly IMediator mediator;
 
-        public ContactsController(ApplicationDbContext context, IContactsQueries contactsQueries)
+        public ContactsController(IContactsQueries contactsQueries, IMediator mediator)
         {
-            _context = context;
             this.contactsQueries = contactsQueries;
+            this.mediator = mediator;
         }
 
         public async Task<IActionResult> Index()
@@ -52,41 +51,29 @@ namespace LisasTours.Controllers
             {
                 return NotFound();
             }
-            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name", contact.ContactTypeId);
+            ViewData["ContactTypes"] = contactsQueries.GetContactTypes();
             return View(contact);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CompanyId,Mail,ContactTypeId,FirstName,PatronymicName,LastName,Id")] Contact contact)
+        public async Task<IActionResult> Edit(int id, ContactVM contact)
         {
-            if (id != contact.Id)
+            try
             {
-                return NotFound();
+                var result = await mediator.Send(new UpdateContactCommand(id, contact));
+                if (!result)
+                {
+                    return NotFound();
+                }
+            }
+            catch (ValidationException ex)
+            {
+                ViewData["ContactTypes"] = contactsQueries.GetContactTypes();
+                return View(contact);
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(contact);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ContactExists(contact.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["ContactTypeId"] = new SelectList(_context.ContactTypes, "Id", "Name", contact.ContactTypeId);
-            return View(contact);
+            return RedirectToAction(nameof(Index));
         }
 
         public IActionResult Delete(int? id)
@@ -108,15 +95,13 @@ namespace LisasTours.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var contact = await _context.Contacts.FindAsync(id);
-            _context.Contacts.Remove(contact);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
+            var result = await mediator.Send(new DeleteContactCommand(id));
+            if (!result)
+            {
+                return NotFound();
+            }
 
-        private bool ContactExists(int id)
-        {
-            return _context.Contacts.Any(e => e.Id == id);
+            return RedirectToAction(nameof(Index));
         }
     }
 }
