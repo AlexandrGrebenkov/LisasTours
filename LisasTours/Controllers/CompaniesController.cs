@@ -16,15 +16,18 @@ namespace LisasTours.Controllers
         private readonly IMapper mapper;
         private readonly IMediator mediator;
         private readonly ICompanyQueries companyQueries;
+        private readonly IContactsQueries contactsQueries;
 
         public CompaniesController(IExporter exporter,
                                    IMediator mediator,
                                    ICompanyQueries companyQueries,
+                                   IContactsQueries contactsQueries,
                                    IMapper mapper)
         {
             this.exporter = exporter;
             this.mediator = mediator;
             this.companyQueries = companyQueries;
+            this.contactsQueries = contactsQueries;
             this.mapper = mapper;
         }
 
@@ -40,13 +43,13 @@ namespace LisasTours.Controllers
             return View(nameof(Index), companies);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var company = await companyQueries.GetCompany(id.Value);
+            var company = companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -78,13 +81,13 @@ namespace LisasTours.Controllers
             }
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var company = await companyQueries.GetCompany(id.Value);
+            var company = companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -112,13 +115,13 @@ namespace LisasTours.Controllers
             }
         }
 
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-            var company = await companyQueries.GetCompany(id.Value);
+            var company = companyQueries.GetCompany(id.Value);
             if (company == null)
             {
                 return NotFound();
@@ -146,7 +149,7 @@ namespace LisasTours.Controllers
         {
             ViewData["BusinessLine"] = companyQueries.GetBusinessLines();
             ViewData["Regions"] = companyQueries.GetRegions();
-            ViewData["ContactTypes"] = companyQueries.GetContactTypes();
+            ViewData["ContactTypes"] = contactsQueries.GetContactTypes();
         }
     }
 }

@@ -1,43 +1,37 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using LisasTours.Application.Queries;
+using LisasTours.Data;
+using LisasTours.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using LisasTours.Data;
-using LisasTours.Models;
 
 namespace LisasTours.Controllers
 {
     public class ContactsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public ContactsController(ApplicationDbContext context)
+        private readonly IContactsQueries contactsQueries;
+        public ContactsController(ApplicationDbContext context, IContactsQueries contactsQueries)
         {
             _context = context;
+            this.contactsQueries = contactsQueries;
         }
 
-        // GET: Contacts
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Contacts.Include(c => c.Company).Include(c => c.ContactType);
-            return View(await applicationDbContext.ToListAsync());
+            var contacts = await contactsQueries.GetContacts();
+            return View(contacts);
         }
 
-        // GET: Contacts/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts
-                .Include(c => c.Company)
-                .Include(c => c.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contact = contactsQueries.GetContact(id.Value);
             if (contact == null)
             {
                 return NotFound();
@@ -46,18 +40,13 @@ namespace LisasTours.Controllers
             return View(contact);
         }
 
-        // GET: Contacts/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public IActionResult Edit(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts
-                .Include(c => c.Company)
-                .Include(c => c.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contact = contactsQueries.GetContact(id.Value);
             if (contact == null)
             {
                 return NotFound();
@@ -66,9 +55,6 @@ namespace LisasTours.Controllers
             return View(contact);
         }
 
-        // POST: Contacts/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("CompanyId,Mail,ContactTypeId,FirstName,PatronymicName,LastName,Id")] Contact contact)
@@ -102,18 +88,13 @@ namespace LisasTours.Controllers
             return View(contact);
         }
 
-        // GET: Contacts/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public IActionResult Delete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var contact = await _context.Contacts
-                .Include(c => c.Company)
-                .Include(c => c.ContactType)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var contact = contactsQueries.GetContact(id.Value);
             if (contact == null)
             {
                 return NotFound();
@@ -122,7 +103,6 @@ namespace LisasTours.Controllers
             return View(contact);
         }
 
-        // POST: Contacts/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

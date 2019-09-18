@@ -59,6 +59,7 @@ namespace LisasTours
             services.AddSingleton<IExporter, ExcelExporter>();
             services.AddSingleton<CompanyFilterService>();
             services.AddScoped<ICompanyQueries, CompanyQueries>();
+            services.AddScoped<IContactsQueries, ContactsQueries>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
