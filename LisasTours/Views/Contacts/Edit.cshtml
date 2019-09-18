@@ -1,11 +1,11 @@
-﻿@model LisasTours.Models.Contact
+﻿@model LisasTours.Models.ViewModels.ContactVM
 
 @{
     ViewData["Title"] = "Редактирование контакта";
 }
 
 <h2>Редактирование контакта</h2>
-<h4>@Model.Company.Name</h4>
+<h4>@Model.CompanyName</h4>
 
 <hr />
 <div class="row">
@@ -39,8 +39,8 @@
 
             <div class="form-group">
                 <label class="control-label">Тип</label>
-                <select asp-for="ContactTypeId" class="form-control" asp-items="ViewBag.ContactTypeId"></select>
-                <span asp-validation-for="ContactTypeId" class="text-danger"></span>
+                <input name="ContactTypeName" class="form-control" list="contactTypesDatalist" value="@Model.ContactTypeName">
+                <span asp-validation-for="ContactTypeName" class="text-danger"></span>
             </div>
 
             <input type="hidden" asp-for="Id" />
@@ -54,6 +54,13 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+<datalist id="contactTypesDatalist">
+    @foreach (var item in ViewBag.ContactTypes)
+    {
+        <option value="@item.Name" />
+    }
+</datalist>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

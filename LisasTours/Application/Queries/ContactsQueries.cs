@@ -21,6 +21,7 @@ namespace LisasTours.Application.Queries
         {
             var contacts = context.Contacts
                 .Include(c => c.ContactType)
+                .Include(c => c.Company)
                 .AsQueryable();
 
             contacts = ApplyPaging(paging, contacts);
@@ -42,6 +43,7 @@ namespace LisasTours.Application.Queries
         {
             return context.Contacts
                 .Include(c => c.ContactType)
+                .Include(c => c.Company)
                 .FirstOrDefault(c => c.Id == id);
         }
 

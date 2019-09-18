@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LisasTours.Models.Contact>
+﻿@model IEnumerable<LisasTours.Models.ViewModels.ContactVM>
 
 @{
     ViewData["Title"] = "Контакты";
@@ -29,7 +29,7 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Company.Name)
+                    @Html.DisplayFor(modelItem => item.CompanyName)
                 </td>
                 <td>
                     @Html.DisplayFor(modelItem => item.FullName)
@@ -38,7 +38,7 @@
                     @Html.DisplayFor(modelItem => item.Mail)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.ContactType.Name)
+                    @Html.DisplayFor(modelItem => item.ContactTypeName)
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

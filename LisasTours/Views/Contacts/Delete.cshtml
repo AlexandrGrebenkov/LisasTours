@@ -1,4 +1,4 @@
-﻿@model LisasTours.Models.Contact
+﻿@model LisasTours.Models.ViewModels.ContactVM
 
 @{
     ViewData["Title"] = "Удаление";
@@ -15,7 +15,7 @@
             Компания
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Company.Name)
+            @Html.DisplayFor(model => model.CompanyName)
         </dd>
         <dt>
             Имя
@@ -33,10 +33,10 @@
             Тип
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ContactType.Name)
+            @Html.DisplayFor(model => model.ContactTypeName)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Удалить" class="btn btn-danger" /> |

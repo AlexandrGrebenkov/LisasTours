@@ -1,4 +1,4 @@
-﻿@model LisasTours.Models.Contact
+﻿@model LisasTours.Models.ViewModels.ContactVM
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.FullName);
@@ -7,14 +7,14 @@
 <h2>@Html.DisplayFor(model => model.FullName)</h2>
 
 <div>
-    <h4>@Html.DisplayFor(model => model.Company.Name)</h4>
+    <h4>@Html.DisplayFor(model => model.CompanyName)</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
             Компания
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.Company.Name)
+            @Html.DisplayFor(model => model.CompanyName)
         </dd>
         <dt>
             Имя
@@ -32,7 +32,7 @@
             Тип
         </dt>
         <dd>
-            @Html.DisplayFor(model => model.ContactType.Name)
+            @Html.DisplayFor(model => model.ContactTypeName)
         </dd>
     </dl>
 </div>

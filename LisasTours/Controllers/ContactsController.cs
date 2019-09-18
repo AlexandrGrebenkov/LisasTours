@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands.Contacts;
 using LisasTours.Application.Queries;
@@ -12,16 +13,20 @@ namespace LisasTours.Controllers
     {
         private readonly IContactsQueries contactsQueries;
         private readonly IMediator mediator;
+        private readonly IMapper mapper;
 
-        public ContactsController(IContactsQueries contactsQueries, IMediator mediator)
+        public ContactsController(IContactsQueries contactsQueries,
+                                  IMediator mediator,
+                                  IMapper mapper)
         {
             this.contactsQueries = contactsQueries;
             this.mediator = mediator;
+            this.mapper = mapper;
         }
 
         public async Task<IActionResult> Index()
         {
-            var contacts = await contactsQueries.GetContacts();
+            var contacts = mapper.Map<ContactVM[]>(await contactsQueries.GetContacts());
             return View(contacts);
         }
 
@@ -37,7 +42,7 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            return View(contact);
+            return View(mapper.Map<ContactVM>(contact));
         }
 
         public IActionResult Edit(int? id)
@@ -52,7 +57,7 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
             ViewData["ContactTypes"] = contactsQueries.GetContactTypes();
-            return View(contact);
+            return View(mapper.Map<ContactVM>(contact));
         }
 
         [HttpPost]
@@ -88,7 +93,7 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            return View(contact);
+            return View(mapper.Map<ContactVM>(contact));
         }
 
         [HttpPost, ActionName("Delete")]
