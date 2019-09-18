@@ -46,7 +46,7 @@ namespace UnitTests.Application.Mapping
                 .Build();
 
             var mapper = Get<IMapper>();
-            var vm = mapper.Map<CreateCompanyVM>(company);
+            var vm = mapper.Map<CompanyVM>(company);
 
             Assert.AreEqual("ООО Ромашки", vm.Name);
             Assert.AreEqual("romashki.com", vm.Site);

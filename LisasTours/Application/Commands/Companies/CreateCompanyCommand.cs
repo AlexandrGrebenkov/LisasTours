@@ -5,9 +5,9 @@ namespace LisasTours.Application.Commands.Companies
 {
     public class CreateCompanyCommand : IRequest<bool>
     {
-        public CreateCompanyVM CreateCompanyVM { get; }
+        public CompanyVM CreateCompanyVM { get; }
 
-        public CreateCompanyCommand(CreateCompanyVM createCompanyVM)
+        public CreateCompanyCommand(CompanyVM createCompanyVM)
         {
             CreateCompanyVM = createCompanyVM;
         }

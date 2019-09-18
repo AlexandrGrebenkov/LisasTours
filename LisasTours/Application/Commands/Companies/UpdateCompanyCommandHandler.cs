@@ -21,17 +21,17 @@ namespace LisasTours.Application.Commands.Companies
 
         public async Task<bool> Handle(UpdateCompanyCommand request, CancellationToken cancellationToken)
         {
-            PrepareData(request.CreateCompanyVM);
+            PrepareData(request.CompanyVM);
             var company = await LoadCompany(request.Id);
-            GetEntities(request.CreateCompanyVM, out var businessLines, out var affiliates, out var contacts);
-            UpdateCompanyModel(request.CreateCompanyVM, company, businessLines, affiliates, contacts);
+            GetEntities(request.CompanyVM, out var businessLines, out var affiliates, out var contacts);
+            UpdateCompanyModel(request.CompanyVM, company, businessLines, affiliates, contacts);
 
             context.Update(company);
             await context.SaveChangesAsync();
             return true;
         }
 
-        private void UpdateCompanyModel(CreateCompanyVM vm,
+        private void UpdateCompanyModel(CompanyVM vm,
                                         Company company,
                                         IEnumerable<CompanyBusinessLine> businessLines,
                                         IEnumerable<Affiliate> affiliates,
@@ -45,7 +45,7 @@ namespace LisasTours.Application.Commands.Companies
             company.Contacts = RightJoin(company.Contacts, contacts, new ContactComparer());
         }
 
-        private void GetEntities(CreateCompanyVM vm,
+        private void GetEntities(CompanyVM vm,
                                  out IEnumerable<CompanyBusinessLine> businessLines,
                                  out IEnumerable<Affiliate> affiliates,
                                  out IEnumerable<Contact> contacts)
@@ -77,7 +77,7 @@ namespace LisasTours.Application.Commands.Companies
             }
         }
 
-        private static void PrepareData(CreateCompanyVM vm)
+        private static void PrepareData(CompanyVM vm)
         {
             vm.Site = vm.Site?.Trim().Replace("http://", "").Replace("https://", "");
         }

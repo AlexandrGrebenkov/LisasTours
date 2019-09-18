@@ -66,7 +66,7 @@ namespace LisasTours.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(CreateCompanyVM vm)
+        public async Task<IActionResult> Create(CompanyVM vm)
         {
             try
             {
@@ -93,14 +93,14 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            var vm = mapper.Map<CreateCompanyVM>(company);
+            var vm = mapper.Map<CompanyVM>(company);
             CreateViewDataForChanges();
             return View(vm);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, CreateCompanyVM vm)
+        public async Task<IActionResult> Edit(int id, CompanyVM vm)
         {
             try
             {

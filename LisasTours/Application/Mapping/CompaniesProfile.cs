@@ -9,7 +9,7 @@ namespace LisasTours.Application.Mapping
     {
         public CompaniesProfile()
         {
-            CreateMap<Company, CreateCompanyVM>()
+            CreateMap<Company, CompanyVM>()
                 .ForMember(dest => dest.Contacts, opt => opt.MapFrom(src => src.Contacts))
                 .AfterMap((src, dest) =>
                 {

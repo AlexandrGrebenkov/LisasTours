@@ -34,6 +34,7 @@ namespace UnitTests.TestInfrastructure
 
             builder.Register(_ => new Mock<IExporter>().Object).SingleInstance();
             builder.Register(_ => new Mock<ICompanyQueries>().Object).SingleInstance();
+            builder.Register(_ => new Mock<IContactsQueries>().Object).SingleInstance();
             builder.Register(_ => new Mock<IMediator>().Object).SingleInstance();
 
             builder.RegisterAssemblyTypes(typeof(Startup).Assembly).As<Profile>();

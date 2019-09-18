@@ -24,7 +24,7 @@ namespace UnitTests.Controllers
                 .Returns(Task.FromResult(true));
 
             var controller = GetController();
-            var actionResult = await controller.Create(new CreateCompanyVM()) as RedirectToActionResult;
+            var actionResult = await controller.Create(new CompanyVM()) as RedirectToActionResult;
 
             Assert.AreEqual(nameof(CompaniesController.Index), actionResult.ActionName);
         }

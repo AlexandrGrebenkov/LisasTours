@@ -5,13 +5,13 @@ namespace LisasTours.Application.Commands.Companies
 {
     public class UpdateCompanyCommand : IRequest<bool>
     {
-        public CreateCompanyVM CreateCompanyVM { get; }
+        public CompanyVM CompanyVM { get; }
         public int Id { get; }
 
-        public UpdateCompanyCommand(int id, CreateCompanyVM createCompanyVM)
+        public UpdateCompanyCommand(int id, CompanyVM companyVM)
         {
             Id = id;
-            CreateCompanyVM = createCompanyVM;
+            CompanyVM = companyVM;
         }
     }
 }

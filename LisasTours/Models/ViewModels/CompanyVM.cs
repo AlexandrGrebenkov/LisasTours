@@ -2,7 +2,7 @@
 
 namespace LisasTours.Models.ViewModels
 {
-    public class CreateCompanyVM
+    public class CompanyVM
     {
         public int Id { get; set; }
         public string Name { get; set; }
