@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
 using LisasTours.Models.Base;
-using Microsoft.AspNetCore.Mvc;
 
 namespace LisasTours.Models
 {
@@ -15,17 +12,6 @@ namespace LisasTours.Models
 
         public IList<Affiliate> Affiliates { get; set; }
 
-        [BindProperty]
         public IList<Contact> Contacts { get; set; }
-
-        [NotMapped]
-        public string BusinessLinesString => BusinessLines != null
-            ? string.Join(", ", BusinessLines.Select(_ => _?.BusinessLine?.Name))
-            : string.Empty;
-
-        [NotMapped]
-        public string AffiliatesString => Affiliates != null
-            ? string.Join(", ", Affiliates.Select(_ => _?.Region?.Name))
-            : string.Empty;
     }
 }

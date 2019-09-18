@@ -34,13 +34,13 @@ namespace LisasTours.Controllers
         public async Task<IActionResult> Index()
         {
             var companies = await companyQueries.GetCompanies(null, null);
-            return View(companies);
+            return View(mapper.Map<CompanyVM[]>(companies));
         }
 
         public async Task<IActionResult> Search(CompanySearchVM searchVM)
         {
             var companies = await companyQueries.GetCompanies(null, searchVM);
-            return View(nameof(Index), companies);
+            return View(nameof(Index), mapper.Map<CompanyVM[]>(companies));
         }
 
         public IActionResult Details(int? id)
@@ -55,7 +55,7 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            return View(company);
+            return View(mapper.Map<CompanyVM>(company));
         }
 
         public IActionResult Create()
@@ -127,7 +127,7 @@ namespace LisasTours.Controllers
                 return NotFound();
             }
 
-            return View(company);
+            return View(mapper.Map<CompanyVM>(company));
         }
 
         [HttpPost, ActionName("Delete")]

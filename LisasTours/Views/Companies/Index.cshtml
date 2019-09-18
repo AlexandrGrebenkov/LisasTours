@@ -1,4 +1,4 @@
-﻿@model IEnumerable<LisasTours.Models.Company>
+﻿@model IEnumerable<LisasTours.Models.ViewModels.CompanyVM>
 
 @{
     ViewData["Title"] = "Компнии";
@@ -35,7 +35,7 @@
                 @Html.DisplayFor(modelItem => item.Site)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.BusinessLinesString)
+                @Html.DisplayFor(modelItem => item.BusinessLineNames)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

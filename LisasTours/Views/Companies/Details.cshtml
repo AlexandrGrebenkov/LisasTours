@@ -1,4 +1,4 @@
-﻿@model LisasTours.Models.Company
+﻿@model LisasTours.Models.ViewModels.CompanyVM
 
 @{
     ViewData["Title"] = @Html.DisplayFor(model => model.Name);
@@ -27,13 +27,13 @@
                     Направления
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.BusinessLinesString)
+                    @Html.DisplayFor(model => model.BusinessLineNames)
                 </dd>
                 <dt>
                     Регионы
                 </dt>
                 <dd>
-                    @Html.DisplayFor(model => model.AffiliatesString)
+                    @Html.DisplayFor(model => model.AffiliationNames)
                 </dd>
                 <dt>
                     Описание
@@ -63,7 +63,7 @@
                         Тип почты
                     </dt>
                     <dd>
-                        @contact.ContactType.Name
+                        @contact.ContactTypeName
                     </dd>
                 </dl>
             }
