@@ -3,7 +3,7 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using LisasTours.Application.Behaviors;
-using LisasTours.Application.Commands;
+using LisasTours.Application.Commands.Companies;
 using LisasTours.Application.Queries;
 using LisasTours.Application.Validations;
 using LisasTours.Data;

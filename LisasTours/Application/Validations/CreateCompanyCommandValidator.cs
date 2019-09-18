@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using LisasTours.Application.Commands;
+using LisasTours.Application.Commands.Companies;
 
 namespace LisasTours.Application.Validations
 {

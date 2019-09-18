@@ -13,6 +13,7 @@ namespace LisasTours.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IContactsQueries contactsQueries;
+
         public ContactsController(ApplicationDbContext context, IContactsQueries contactsQueries)
         {
             _context = context;

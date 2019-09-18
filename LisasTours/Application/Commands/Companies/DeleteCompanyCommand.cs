@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace LisasTours.Application.Commands
+namespace LisasTours.Application.Commands.Companies
 {
     public class DeleteCompanyCommand : IRequest
     {

@@ -8,7 +8,7 @@ using LisasTours.Models.ViewModels;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace LisasTours.Application.Commands
+namespace LisasTours.Application.Commands.Companies
 {
     public class UpdateCompanyCommandHandler : IRequestHandler<UpdateCompanyCommand, bool>
     {

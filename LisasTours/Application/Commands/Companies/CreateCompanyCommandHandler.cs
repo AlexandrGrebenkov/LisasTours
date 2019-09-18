@@ -5,7 +5,7 @@ using LisasTours.Data;
 using LisasTours.Models;
 using MediatR;
 
-namespace LisasTours.Application.Commands
+namespace LisasTours.Application.Commands.Companies
 {
     public class CreateCompanyCommandHandler : IRequestHandler<CreateCompanyCommand, bool>
     {

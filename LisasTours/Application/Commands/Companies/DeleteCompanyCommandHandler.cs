@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using LisasTours.Data;
 using MediatR;
 
-namespace LisasTours.Application.Commands
+namespace LisasTours.Application.Commands.Companies
 {
     public class DeleteCompanyCommandHandler : IRequestHandler<DeleteCompanyCommand>
     {
