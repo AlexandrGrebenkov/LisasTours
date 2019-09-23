@@ -10,8 +10,10 @@ namespace LisasTours.Models.ViewModels
         public string Information { get; set; }
 
         public IList<string> BusinessLineNames { get; set; }
+        public string BusinessLineNamesString => string.Join(", ", BusinessLineNames);
 
         public IList<string> AffiliationNames { get; set; }
+        public string AffiliationNamesString => string.Join(", ", AffiliationNames);
 
         public IList<ContactVM> Contacts { get; set; }
     }
