@@ -16,6 +16,7 @@
             </div>
             <button type="button" class="btn btn-secondary" onclick="addNewComponent(namesDiv)">+</button>
         </div>
+
         <div class="form-group">
             <label class="control-label">Регионы</label>
             <div id="regionsDiv">
@@ -24,6 +25,20 @@
             <button type="button" class="btn btn-secondary" onclick="addNewComponent(regionsDiv)">+</button>
             <datalist id="regionDatalist">
                 @foreach (var item in ViewBag.Regions)
+                {
+                    <option value="@item.Name" />
+                }
+            </datalist>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label">Направления деятельности</label>
+            <div id="blDiv">
+                <input name="BusinessLines[0]" class="form-control" list="blDatalist" />
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addNewComponent(blDiv)">+</button>
+            <datalist id="blDatalist">
+                @foreach (var item in ViewBag.BusinessLines)
                 {
                     <option value="@item.Name" />
                 }

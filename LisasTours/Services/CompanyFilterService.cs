@@ -17,9 +17,22 @@ namespace LisasTours.Services
             {
                 CreateCompanyNamesFilter(searchVM.CompanyNames),
                 CreateRegionFilter(searchVM.RegionNames),
+                CreateBusinessLineFilter(searchVM.BusinessLines),
             };
 
             return filters.And();
+        }
+
+        private static Expression<Func<Company, bool>> CreateCompanyNamesFilter(IEnumerable<string> names)
+        {
+            var list = names?.ToList();
+            list?.RemoveAll(_ => string.IsNullOrWhiteSpace(_));
+            if (names == null || list.Count == 0)
+            {
+                return c => true;
+            }
+
+            return c => list.Contains(c.Name);
         }
 
         private static Expression<Func<Company, bool>> CreateRegionFilter(IEnumerable<string> names)
@@ -34,7 +47,7 @@ namespace LisasTours.Services
             return c => c.Affiliates.Any(_ => list.Contains(_.Region.Name));
         }
 
-        private static Expression<Func<Company, bool>> CreateCompanyNamesFilter(IEnumerable<string> names)
+        private static Expression<Func<Company, bool>> CreateBusinessLineFilter(IEnumerable<string> names)
         {
             var list = names?.ToList();
             list?.RemoveAll(_ => string.IsNullOrWhiteSpace(_));
@@ -43,7 +56,7 @@ namespace LisasTours.Services
                 return c => true;
             }
 
-            return c => list.Contains(c.Name);
+            return c => c.BusinessLines.Any(_ => list.Contains(_.BusinessLine.Name));
         }
     }
 }

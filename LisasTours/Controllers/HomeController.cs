@@ -17,6 +17,7 @@ namespace LisasTours.Controllers
         public IActionResult Index()
         {
             ViewData["Regions"] = _context.Set<Region>();
+            ViewData["BusinessLines"] = _context.Set<BusinessLine>();
             return View();
         }
 
