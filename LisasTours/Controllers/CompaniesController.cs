@@ -138,9 +138,9 @@ namespace LisasTours.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        public async Task<IActionResult> Export()
+        public async Task<IActionResult> Export(CompanySearchVM searchVM)
         {
-            var companies = await companyQueries.GetCompanies(null, null);
+            var companies = await companyQueries.GetCompanies(null, searchVM);
             var report = await exporter.GenerateCompaniesReport(companies);
             return File(report, "application/vnd.ms-excel", "Компании.xslx");
         }
