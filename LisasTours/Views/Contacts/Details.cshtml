@@ -7,7 +7,9 @@
 <h2>@Html.DisplayFor(model => model.FullName)</h2>
 
 <div>
-    <h4>@Html.DisplayFor(model => model.CompanyName)</h4>
+    <h4>
+        <a asp-controller="Companies" asp-action="Details" asp-route-id="@Model.CompanyId">@Html.DisplayFor(model => model.CompanyName)</a>
+    </h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
