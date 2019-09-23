@@ -15,20 +15,35 @@ namespace LisasTours.Services
         {
             var filters = new List<Expression<Func<Company, bool>>>()
             {
+                CreateCompanyNamesFilter(searchVM.CompanyNames),
                 CreateRegionFilter(searchVM.RegionNames),
             };
 
             return filters.And();
         }
 
-        private static Expression<Func<Company, bool>> CreateRegionFilter(IEnumerable<string> regionNames)
+        private static Expression<Func<Company, bool>> CreateRegionFilter(IEnumerable<string> names)
         {
-            if (regionNames == null)
+            var list = names?.ToList();
+            list?.RemoveAll(_ => string.IsNullOrWhiteSpace(_));
+            if (names == null || list.Count == 0)
             {
-                return null;
+                return c => true;
             }
 
-            return c => c.Affiliates.Any(_ => regionNames.Contains(_.Region.Name));
+            return c => c.Affiliates.Any(_ => list.Contains(_.Region.Name));
+        }
+
+        private static Expression<Func<Company, bool>> CreateCompanyNamesFilter(IEnumerable<string> names)
+        {
+            var list = names?.ToList();
+            list?.RemoveAll(_ => string.IsNullOrWhiteSpace(_));
+            if (names == null || list.Count == 0)
+            {
+                return c => true;
+            }
+
+            return c => list.Contains(c.Name);
         }
     }
 }

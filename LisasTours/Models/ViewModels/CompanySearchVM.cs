@@ -7,6 +7,7 @@ namespace LisasTours.Models.ViewModels
 {
     public class CompanySearchVM
     {
+        public IEnumerable<string> CompanyNames { get; set; }
         public IEnumerable<string> RegionNames { get; set; }
     }
 }

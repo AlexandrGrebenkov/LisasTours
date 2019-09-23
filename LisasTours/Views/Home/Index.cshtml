@@ -10,9 +10,18 @@
     <form asp-action="Search" asp-controller="Companies">
 
         <div class="form-group">
+            <label class="control-label">Названия</label>
+            <div id="namesDiv">
+                <input name="CompanyNames[0]" class="form-control" />
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addNewComponent(namesDiv)">+</button>
+        </div>
+        <div class="form-group">
             <label class="control-label">Регионы</label>
-            <input name="RegionNames" class="form-control" list="regionDatalist" />
-            <button type="button" class="btn btn-secondary" onclick="addNewRegion()" id="regionBtn">+</button>
+            <div id="regionsDiv">
+                <input name="RegionNames[0]" class="form-control" list="regionDatalist" />
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="addNewComponent(regionsDiv)">+</button>
             <datalist id="regionDatalist">
                 @foreach (var item in ViewBag.Regions)
                 {
@@ -25,7 +34,7 @@
             <div class="col-md-4">
                 <div class="form-group">
                     <input type="submit" value="Поиск" class="btn btn-primary" />
-                    <input type="submit" value="Экспорт" class="btn btn-success" asp-controller="Companies" asp-action="Export"/>
+                    <input type="submit" value="Экспорт" class="btn btn-success" asp-controller="Companies" asp-action="Export" />
                 </div>
             </div>
         </div>
@@ -33,12 +42,32 @@
 </div>
 
 <script>
-    function addNewRegion() {
-        var input = document.createElement("input");
-        input.setAttribute('class', 'form-control');
-        input.setAttribute('name', 'RegionNames');
-        input.setAttribute('list', 'regionDatalist');
-        regionBtn.before(input)
+    function addNewComponent(div) {
+        var newElement = div.children[div.children.length - 1].cloneNode(true);
+        updateIndex(newElement);
+        div.append(newElement);
+    }
+
+    function updateIndex(node) {
+        if (node == null)
+            return;
+
+        if (node.type == "text") {
+            node.value = '';
+        }
+
+        if (node.name != null) {
+            let result = node.name.match(/[[\d]+]/);
+            if (result != null) {
+                var newIndex = parseInt(result[0].replace('[', '').replace(']', '')) + 1;
+                node.name = node.name.replace(/[[\d]+]/, '[' + newIndex + ']');
+            }
+        }
+
+        for (let i = 0; i < node.children.length; i++) {
+            const element = node.children[i];
+            updateIndex(element);
+        };
     }
 </script>
 
