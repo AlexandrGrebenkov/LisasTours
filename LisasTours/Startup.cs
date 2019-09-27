@@ -1,4 +1,6 @@
+﻿using System;
 using System.Reflection;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
@@ -88,6 +90,43 @@ namespace LisasTours
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            // Добавляем роли
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            string[] roleNames = { "Admin", "Manager" };
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // Создаём супер-пользователя
+            var superuser = new IdentityUser
+            {
+                UserName = Configuration.GetSection("UserSettings")["UserEmail"],
+                Email = Configuration.GetSection("UserSettings")["UserEmail"]
+            };
+
+            string UserPassword = Configuration.GetSection("UserSettings")["UserPassword"];
+            var user = await UserManager.FindByEmailAsync(Configuration.GetSection("UserSettings")["UserEmail"]);
+
+            if (user == null)
+            {
+                var createSuperUser = await UserManager.CreateAsync(superuser, UserPassword);
+                if (createSuperUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(superuser, "Admin");
+                }
+            }
         }
     }
 }
