@@ -1,3 +1,5 @@
+using System;
+using System.Data.SqlClient;
 using System.Reflection;
 using AutoMapper;
 using FluentValidation;
@@ -39,9 +41,10 @@ namespace LisasTours
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            string connectionString = GetConnectionString();
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("LocalDb")));
+                options.UseSqlServer(connectionString));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
@@ -60,6 +63,23 @@ namespace LisasTours
             services.AddSingleton<CompanyFilterService>();
             services.AddScoped<ICompanyQueries, CompanyQueries>();
             services.AddScoped<IContactsQueries, ContactsQueries>();
+        }
+
+        private string GetConnectionString()
+        {
+            var connectionStringName = Configuration["SelectedConnectionString"] ?? "LocalDb";
+            if (string.IsNullOrEmpty(Configuration.GetConnectionString(connectionStringName)))
+            {
+                throw new Exception("Неверно выбрана строка подключения");
+            }
+            var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString(connectionStringName));
+            var password = Configuration[$"{connectionStringName}Password"];
+            if (!string.IsNullOrEmpty(password))
+            {
+                builder.Password = Configuration[$"{connectionStringName}Password"];
+            }
+            var connectionString = builder.ConnectionString;
+            return connectionString;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
