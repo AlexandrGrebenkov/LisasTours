@@ -9,6 +9,7 @@ using LisasTours.Application.Commands.Companies;
 using LisasTours.Application.Queries;
 using LisasTours.Application.Validations;
 using LisasTours.Data;
+using LisasTours.Models.Identity;
 using LisasTours.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -62,6 +63,7 @@ namespace LisasTours
             services.AddSingleton<CompanyFilterService>();
             services.AddScoped<ICompanyQueries, CompanyQueries>();
             services.AddScoped<IContactsQueries, ContactsQueries>();
+            services.AddScoped<IUsersQueries, UsersQueries>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -96,7 +98,7 @@ namespace LisasTours
         {
             // Добавляем роли
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            var UserManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
             string[] roleNames = { "Admin", "Manager" };
             IdentityResult roleResult;
 
@@ -110,7 +112,7 @@ namespace LisasTours
             }
 
             // Создаём супер-пользователя
-            var superuser = new IdentityUser
+            var superuser = new ApplicationUser
             {
                 UserName = Configuration.GetSection("UserSettings")["UserEmail"],
                 Email = Configuration.GetSection("UserSettings")["UserEmail"]
