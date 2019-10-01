@@ -7,10 +7,10 @@ namespace LisasTours.Models.ViewModels
 {
     public class UserVM
     {
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string UserName { get; set; }
 
-        public string UserRole { get; set; }
+        public string UserRoles { get; set; }
     }
 }

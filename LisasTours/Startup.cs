@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -6,6 +7,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using LisasTours.Application.Behaviors;
 using LisasTours.Application.Commands.Companies;
+using LisasTours.Application.Mapping;
 using LisasTours.Application.Queries;
 using LisasTours.Application.Validations;
 using LisasTours.Data;
@@ -45,11 +47,16 @@ namespace LisasTours
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("LocalDb")));
-            services.AddDefaultIdentity<IdentityUser>()
+            services.AddDefaultIdentity<ApplicationUser>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
-            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            services.AddSingleton<IMapper, Mapper>();
+            services.AddSingleton(provider => new MapperConfiguration(cfg =>
+                cfg.AddProfile(new UsersProfile(provider.GetRequiredService<UserManager<ApplicationUser>>()))
+            ));
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -64,6 +71,8 @@ namespace LisasTours
             services.AddScoped<ICompanyQueries, CompanyQueries>();
             services.AddScoped<IContactsQueries, ContactsQueries>();
             services.AddScoped<IUsersQueries, UsersQueries>();
+
+            CreateRoles(services.BuildServiceProvider()).Wait();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -99,7 +108,8 @@ namespace LisasTours
             // Добавляем роли
             var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
             var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-            string[] roleNames = { "Admin", "Manager" };
+            var roleNames = typeof(RoleNames).GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(_ => _.GetValue(null).ToString());
             IdentityResult roleResult;
 
             foreach (var roleName in roleNames)
@@ -126,7 +136,7 @@ namespace LisasTours
                 var createSuperUser = await UserManager.CreateAsync(superuser, UserPassword);
                 if (createSuperUser.Succeeded)
                 {
-                    await UserManager.AddToRoleAsync(superuser, "Admin");
+                    await UserManager.AddToRoleAsync(superuser, RoleNames.Admin);
                 }
             }
         }
