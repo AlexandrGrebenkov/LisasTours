@@ -1,0 +1,34 @@
+﻿@using Microsoft.AspNetCore.Identity;
+@model LisasTours.Models.ViewModels.UserVM
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h2>Редактирование пользователя</h2>
+<h4>@Model.UserName</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+
+            <div class="form-group">
+                @foreach (IdentityRole role in ViewBag.AllRoles)
+                {
+                    <input type="checkbox" name="roles" value="@role.Name"
+                           @(Model.Roles.Contains(role.Name) ? "checked=\"checked\"" : "") />@role.Name <br />
+                }
+            </div>
+
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserName" />
+            <div class="form-group">
+                <input type="submit" value="Сохранить" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,14 +1,18 @@
 using System;
 using System.Data.SqlClient;
+using System.Linq;
 using System.Reflection;
+using System.Threading.Tasks;
 using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using LisasTours.Application.Behaviors;
 using LisasTours.Application.Commands.Companies;
+using LisasTours.Application.Mapping;
 using LisasTours.Application.Queries;
 using LisasTours.Application.Validations;
 using LisasTours.Data;
+using LisasTours.Models.Identity;
 using LisasTours.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -45,11 +49,19 @@ namespace LisasTours
 
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
-            services.AddDefaultIdentity<IdentityUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddRoleManager<RoleManager<IdentityRole>>()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultUI()
+                .AddDefaultTokenProviders();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            /*services.AddSingleton<IMapper, Mapper>();
+            services.AddSingleton(provider => new MapperConfiguration(cfg =>
+                cfg.AddProfile(new UsersProfile(provider.GetRequiredService<UserManager<ApplicationUser>>()))
+            ));*/
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
@@ -63,6 +75,9 @@ namespace LisasTours
             services.AddSingleton<CompanyFilterService>();
             services.AddScoped<ICompanyQueries, CompanyQueries>();
             services.AddScoped<IContactsQueries, ContactsQueries>();
+            services.AddScoped<IUsersQueries, UsersQueries>();
+
+            CreateRoles(services.BuildServiceProvider()).Wait();
         }
 
         private string GetConnectionString()
@@ -70,7 +85,7 @@ namespace LisasTours
             var connectionStringName = Configuration["SelectedConnectionString"] ?? "LocalDb";
             if (string.IsNullOrEmpty(Configuration.GetConnectionString(connectionStringName)))
             {
-                throw new Exception("Неверно выбрана строка подключения");
+                throw new Exception("пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ");
             }
             var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString(connectionStringName));
             var password = Configuration[$"{connectionStringName}Password"];
@@ -108,6 +123,44 @@ namespace LisasTours
                     name: "default",
                     template: "{controller=Home}/{action=Index}/{id?}");
             });
+        }
+
+        private async Task CreateRoles(IServiceProvider serviceProvider)
+        {
+            // Р”РѕР±Р°РІР»СЏРµРј СЂРѕР»Рё
+            var RoleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+            var UserManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+            var roleNames = typeof(RoleNames).GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(_ => _.GetValue(null).ToString());
+            IdentityResult roleResult;
+
+            foreach (var roleName in roleNames)
+            {
+                var roleExist = await RoleManager.RoleExistsAsync(roleName);
+                if (!roleExist)
+                {
+                    roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                }
+            }
+
+            // РЎРѕР·РґР°С‘Рј СЃСѓРїРµСЂ-РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+            var superuser = new ApplicationUser
+            {
+                UserName = Configuration.GetSection("UserSettings")["UserEmail"],
+                Email = Configuration.GetSection("UserSettings")["UserEmail"]
+            };
+
+            string UserPassword = Configuration.GetSection("UserSettings")["UserPassword"];
+            var user = await UserManager.FindByEmailAsync(Configuration.GetSection("UserSettings")["UserEmail"]);
+
+            if (user == null)
+            {
+                var createSuperUser = await UserManager.CreateAsync(superuser, UserPassword);
+                if (createSuperUser.Succeeded)
+                {
+                    await UserManager.AddToRoleAsync(superuser, RoleNames.Admin);
+                }
+            }
         }
     }
 }
