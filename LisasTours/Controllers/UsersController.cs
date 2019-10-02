@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
+using FluentValidation;
+using LisasTours.Application.Commands.Identity;
 using LisasTours.Application.Queries;
 using LisasTours.Data;
 using LisasTours.Models.Identity;
@@ -26,7 +28,7 @@ namespace LisasTours.Controllers
 
         public UsersController(IUsersQueries usersQueries,
                                IMapper mapper,
-                               IMediator mediator, 
+                               IMediator mediator,
                                ApplicationDbContext context,
                                UserManager<ApplicationUser> userManager)
         {
@@ -58,9 +60,16 @@ namespace LisasTours.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(UserVM userVM)
+        public async Task<IActionResult> Edit(UserVM userVM)
         {
-
+            try
+            {
+                await mediator.Send(new UpdateUserCommand(userVM));
+            }
+            catch (ValidationException)
+            {
+                return BadRequest();
+            }
             return RedirectToAction(nameof(Index));
         }
     }
