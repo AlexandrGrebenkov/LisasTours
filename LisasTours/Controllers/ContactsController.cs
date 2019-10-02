@@ -3,12 +3,15 @@ using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands.Contacts;
 using LisasTours.Application.Queries;
+using LisasTours.Models.Identity;
 using LisasTours.Models.ViewModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LisasTours.Controllers
 {
+    [Authorize(Roles = RoleNames.BasicActions)]
     public class ContactsController : Controller
     {
         private readonly IContactsQueries contactsQueries;

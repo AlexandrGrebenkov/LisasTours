@@ -3,13 +3,16 @@ using AutoMapper;
 using FluentValidation;
 using LisasTours.Application.Commands.Companies;
 using LisasTours.Application.Queries;
+using LisasTours.Models.Identity;
 using LisasTours.Models.ViewModels;
 using LisasTours.Services;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LisasTours.Controllers
 {
+    [Authorize(Roles = RoleNames.BasicActions)]
     public class CompaniesController : Controller
     {
         private readonly IExporter exporter;
