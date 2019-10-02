@@ -52,11 +52,11 @@ namespace LisasTours
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddMediatR(Assembly.GetExecutingAssembly());
-            //services.AddAutoMapper(Assembly.GetExecutingAssembly());
-            services.AddSingleton<IMapper, Mapper>();
+            services.AddAutoMapper(Assembly.GetExecutingAssembly());
+            /*services.AddSingleton<IMapper, Mapper>();
             services.AddSingleton(provider => new MapperConfiguration(cfg =>
                 cfg.AddProfile(new UsersProfile(provider.GetRequiredService<UserManager<ApplicationUser>>()))
-            ));
+            ));*/
 
             services.AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)

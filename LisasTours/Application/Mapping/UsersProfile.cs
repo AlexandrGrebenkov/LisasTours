@@ -7,12 +7,13 @@ namespace LisasTours.Application.Mapping
 {
     public class UsersProfile : Profile
     {
-        public UsersProfile(UserManager<ApplicationUser> userManager)
+        public UsersProfile(/*UserManager<ApplicationUser> userManager*/)
         {
-            CreateMap<ApplicationUser, UserVM>().AfterMap(async (src, dst) =>
+            CreateMap<ApplicationUser, UserVM>();
+            /*    .AfterMap(async (src, dst) =>
             {
                 dst.UserRoles = string.Join(", ", await userManager.GetRolesAsync(src));
-            });
+            });*/
         }
     }
 }
