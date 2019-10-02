@@ -4,8 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using LisasTours.Application.Queries;
+using LisasTours.Models.Identity;
 using LisasTours.Models.ViewModels;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LisasTours.Controllers
@@ -25,6 +27,7 @@ namespace LisasTours.Controllers
             this.mediator = mediator;
         }
 
+        [Authorize(Roles = RoleNames.Admin)]
         public async Task<IActionResult> Index()
         {
             var users = mapper.Map<UserVM[]>(await usersQueries.GetAllUsers());
