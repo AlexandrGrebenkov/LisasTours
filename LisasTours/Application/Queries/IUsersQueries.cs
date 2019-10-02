@@ -7,6 +7,6 @@ namespace LisasTours.Application.Queries
     public interface IUsersQueries
     {
         Task<IEnumerable<ApplicationUser>> GetAllUsers();
-        ApplicationUser GetUser(int id);
+        ApplicationUser GetUser(string id);
     }
 }

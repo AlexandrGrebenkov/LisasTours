@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace LisasTours.Models.ViewModels
 {
@@ -11,6 +8,6 @@ namespace LisasTours.Models.ViewModels
 
         public string UserName { get; set; }
 
-        public string UserRoles { get; set; }
+        public IEnumerable<string> Roles { get; set; }
     }
 }
