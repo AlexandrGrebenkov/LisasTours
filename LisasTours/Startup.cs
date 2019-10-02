@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -44,13 +45,11 @@ namespace LisasTours
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            string connectionString = GetConnectionString();
+
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("LocalDb")));
-            /* services.AddDefaultIdentity<ApplicationUser>()
-                 .AddRoles<IdentityRole>()
-                 .AddEntityFrameworkStores<ApplicationDbContext>();
-             */
+                options.UseSqlServer(connectionString));
+
             services.AddIdentity<ApplicationUser, IdentityRole>()
                 .AddRoleManager<RoleManager<IdentityRole>>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -79,6 +78,23 @@ namespace LisasTours
             services.AddScoped<IUsersQueries, UsersQueries>();
 
             CreateRoles(services.BuildServiceProvider()).Wait();
+        }
+
+        private string GetConnectionString()
+        {
+            var connectionStringName = Configuration["SelectedConnectionString"] ?? "LocalDb";
+            if (string.IsNullOrEmpty(Configuration.GetConnectionString(connectionStringName)))
+            {
+                throw new Exception("������� ������� ������ �����������");
+            }
+            var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString(connectionStringName));
+            var password = Configuration[$"{connectionStringName}Password"];
+            if (!string.IsNullOrEmpty(password))
+            {
+                builder.Password = Configuration[$"{connectionStringName}Password"];
+            }
+            var connectionString = builder.ConnectionString;
+            return connectionString;
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
