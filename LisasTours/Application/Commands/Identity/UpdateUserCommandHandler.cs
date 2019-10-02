@@ -12,15 +12,12 @@ namespace LisasTours.Application.Commands.Identity
     {
         private readonly ApplicationDbContext context;
         private readonly UserManager<ApplicationUser> userManager;
-        RoleManager<IdentityRole> roleManager;
 
         public UpdateUserCommandHandler(ApplicationDbContext context,
-                                        UserManager<ApplicationUser> userManager, 
-                                        RoleManager<IdentityRole> roleManager)
+                                        UserManager<ApplicationUser> userManager)
         {
             this.context = context;
             this.userManager = userManager;
-            this.roleManager = roleManager;
         }
 
         public async Task<Unit> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
